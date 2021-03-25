@@ -26,7 +26,6 @@ void main() async {
   ));
 }
 
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -315,7 +314,7 @@ class _MyAppState extends State<MyApp> {
                           carouselController: CarouselController(),
                           options: CarouselOptions(
                             autoPlay: true,
-                            height: 300,
+                            height: 301,
                             initialPage: 2,
                           ),
                           items: imgList
