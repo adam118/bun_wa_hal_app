@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "105658949139",
+    "firebase_url": "https://bun-wa-hal-app-default-rtdb.firebaseio.com",
+    "project_id": "bun-wa-hal-app",
+    "storage_bucket": "bun-wa-hal-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105658949139:android:4215689eda370288b769e6",
+        "android_client_info": {
+          "package_name": "com.beejo.bun_wa_hal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "105658949139-be9e59sr394tbcp703nvl62osbcuue42.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beejo.bun_wa_hal",
+            "certificate_hash": "91449d2c56959394d2e88de738eed0a231cac846"
+          }
+        },
+        {
+          "client_id": "105658949139-v65s43s2b8ks8ioaah9faovfr8b6ecac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKnhDnqbEDm401hzSw2-Hchn9nznLCINg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "105658949139-v65s43s2b8ks8ioaah9faovfr8b6ecac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
