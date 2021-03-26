@@ -1,20 +1,21 @@
 import 'package:badges/badges.dart';
 import 'package:bun_wa_hal/auth/myAcount.dart';
+import 'package:bun_wa_hal/order/finalscreen.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/Splash/Splash.dart';
 import 'package:bun_wa_hal/auth/chose.dart';
-import 'package:bun_wa_hal/loyalty/loyalty.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/model/item.dart';
 import 'package:bun_wa_hal/style/styli.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(ChangeNotifierProvider(
@@ -30,6 +31,8 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
+
+final CollectionReference Item = FirebaseFirestore.instance.collection('Items');
 
 final List<String> imgList = [
   'Images/image1.png',
@@ -131,317 +134,344 @@ class _MyAppState extends State<MyApp> {
         price: 310,
       ),
     ];
+    Query query = FirebaseFirestore.instance.collection('Items');
+
     return MaterialApp(
-        theme: isDark ? ThemeData.light() : ThemeData.dark(),
-        debugShowCheckedModeBanner: false,
-        home: Consumer<Cart>(builder: (
+      theme: isDark ? ThemeData.light() : ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
+      home: Consumer<Cart>(
+        builder: (
           context,
           cart,
           child,
         ) {
           return Scaffold(
-              key: _scaffoldKey,
-              drawer: Theme(
-                data: Theme.of(context).copyWith(
-                  // Set the transparency here
-                  canvasColor: Colors.white.withOpacity(
-                      0), //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+            key: _scaffoldKey,
+            drawer: Theme(
+              data: Theme.of(context).copyWith(
+                // Set the transparency here
+                canvasColor: Colors.white.withOpacity(
+                    0), //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+              ),
+              child: Drawer(
+                elevation: 5,
+                child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  // Important: Remove any padding from the ListView.
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    Container(
+                      height: 200,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: <Color>[
+                            Colors.black.withOpacity(0),
+                            Colora().green
+                          ],
+                        ),
+                      ),
+                      child: Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: Hero(
+                            tag: logoTage,
+                            child: Image.asset(
+                              'Images/logo.png',
+                            ),
+                          )),
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.home_outlined,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'الرئيسية',
+                        style: GoogleFonts.cairo(
+                          color: Colors.white,
+                        ),
+                      ),
+                      onTap: () {
+                        _scaffoldKey.currentState.openEndDrawer();
+                      },
+                    ),
+                    ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyAccount()));
+                      },
+                      leading: Icon(
+                        Icons.account_box_outlined,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'حسابي',
+                        style: GoogleFonts.cairo(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'العربة',
+                        style: GoogleFonts.cairo(
+                          color: Colors.white,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => check_out()));
+                      },
+                    ),
+                    ListTile(
+                        leading: Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.white,
+                        ),
+                        title: Text(
+                          'تسديل الخروج',
+                          style: GoogleFonts.cairo(
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () async {
+                          final SharedPreferences sharedPreferences =
+                              await SharedPreferences.getInstance();
+                          sharedPreferences.remove('phone');
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => chose()));
+                        }),
+                  ],
                 ),
-                child: Drawer(
-                  elevation: 5,
-                  child: ListView(
-                    physics: NeverScrollableScrollPhysics(),
-                    // Important: Remove any padding from the ListView.
-                    padding: EdgeInsets.zero,
-                    children: <Widget>[
-                      Container(
-                        height: 200,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: <Color>[
-                              Colors.black.withOpacity(0),
-                              Colora().green
-                            ],
-                          ),
+              ),
+            ),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(color: Colora().brown),
+              elevation: 0,
+              title: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  'Images/logo.png',
+                  scale: 10,
+                ),
+              ),
+              centerTitle: true,
+              actions: <Widget>[
+                cart.basketItems.length == 0
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.shopping_cart,
                         ),
-                        child: Padding(
-                            padding: const EdgeInsets.all(28.0),
-                            child: Hero(
-                              tag: logoTage,
-                              child: Image.asset(
-                                'Images/logo.png',
-                              ),
-                            )),
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          Icons.home_outlined,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          'الرئيسية',
-                          style: GoogleFonts.cairo(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () {
-                          _scaffoldKey.currentState.openEndDrawer();
-                        },
-                      ),
-                      ListTile(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyAccount()));
-                        },
-                        leading: Icon(
-                          Icons.account_box_outlined,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          'حسابي',
-                          style: GoogleFonts.cairo(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          Icons.shopping_cart_outlined,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          'العربة',
-                          style: GoogleFonts.cairo(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () {
+                        tooltip: 'cart',
+                        onPressed: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => check_out()));
-                        },
-                      ),
-                      ListTile(
-                          leading: Icon(
-                            Icons.account_circle_outlined,
-                            color: Colors.white,
-                          ),
-                          title: Text(
-                            'تسديل الخروج',
-                            style: GoogleFonts.cairo(
-                              color: Colors.white,
-                            ),
-                          ),
-                          onTap: () async {
-                            final SharedPreferences sharedPreferences =
-                                await SharedPreferences.getInstance();
-                            sharedPreferences.remove('phone');
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => chose()));
-                          }),
-                      ListTile(
-                        leading: Icon(
-                          Icons.loyalty_outlined,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          'نقاطي',
-                          style: GoogleFonts.cairo(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Loyalty()));
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                iconTheme: IconThemeData(color: Colora().brown),
-                elevation: 0,
-                title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    'Images/logo.png',
-                    scale: 10,
-                  ),
-                ),
-                centerTitle: true,
-                actions: <Widget>[
-                  cart.basketItems.length == 0
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.shopping_cart,
-                          ),
-                          tooltip: 'cart',
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => check_out()));
-                          })
-                      : _shoppingCartBadge(),
-                  IconButton(
-                      icon: isDark ? dark : light,
-                      tooltip: 'dark/light mood',
-                      onPressed: () {
-                        setState(() {
-                          isDark = !isDark;
-                        });
-                      })
-                ],
-              ),
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                        height: 200,
-                        child: CarouselSlider(
-                          carouselController: CarouselController(),
-                          options: CarouselOptions(
-                            autoPlay: true,
-                            height: 301,
-                            initialPage: 2,
-                          ),
-                          items: imgList
-                              .map((item) => Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ClipRRect(
-                                      child: Container(
-                                        child: Center(
-                                            child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Image.asset(item,
-                                              fit: BoxFit.contain,
-                                              scale: 0.5,
-                                              width: 1000),
-                                        )),
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: Text(
-                        "منتجاتنا",
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.w600,
-                            color: Colora().green,
-                            fontSize: TextSized().textTitle),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: double.infinity,
-                        child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            return Hero(
-                              tag: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => coffee1()));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          side: BorderSide(
-                                              color: Colora().brown, width: 4)),
-                                      child: Container(
-                                        height: 160,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            ClipRRect(
-                                              child: Image.asset(
-                                                'Images/coffee.png',
-                                                scale: 7,
-                                              ),
+                        })
+                    : _shoppingCartBadge(),
+                IconButton(
+                    icon: isDark ? dark : light,
+                    tooltip: 'dark/light mood',
+                    onPressed: () {
+                      setState(() {
+                        isDark = !isDark;
+                      });
+                    })
+              ],
+            ),
+            // body:
+            body: StreamBuilder<QuerySnapshot>(
+              stream: query.snapshots(),
+              builder: (context, stream) {
+                if (stream.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (stream.hasError) {
+                  print(stream.error);
+                  return Center(child: Text(stream.error.toString()));
+                }
+
+                QuerySnapshot querySnapshot = stream.data;
+                setState(() {
+                  userPoints = querySnapshot.docs[0]['points'];
+                });
+                return ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) => SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                            height: 200,
+                            child: CarouselSlider(
+                              carouselController: CarouselController(),
+                              options: CarouselOptions(
+                                autoPlay: true,
+                                height: 301,
+                                initialPage: 2,
+                              ),
+                              items: imgList
+                                  .map((item) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
+                                          child: Container(
+                                            child: Center(
+                                                child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(20),
-                                            ),
-                                            Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Center(
-                                                  child: Column(
-                                                    children: [
-                                                      Center(
-                                                        child: Text(
-                                                          items[index].title,
-                                                          style: GoogleFonts.cairo(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color: Colora()
-                                                                  .green,
-                                                              fontSize: TextSized()
-                                                                  .textMediam),
-                                                        ),
-                                                      ),
-                                                      Center(
-                                                        child: Text(
-                                                          "Turkish coffee",
-                                                          style: GoogleFonts.cairo(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color: Colora()
-                                                                  .green,
-                                                              fontSize:
-                                                                  TextSized()
-                                                                      .textTitle),
-                                                        ),
-                                                      ),
-                                                    ],
+                                              child: Image.asset(item,
+                                                  fit: BoxFit.contain,
+                                                  scale: 0.5,
+                                                  width: 1000),
+                                            )),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: Text(
+                            'منتجاتنا',
+                            style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().green,
+                                fontSize: TextSized().textTitle),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: double.infinity,
+                            child: ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: querySnapshot.size,
+                              itemBuilder: (context, index) {
+                                return Hero(
+                                  tag: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      coffee1()));
+                                        },
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              side: BorderSide(
+                                                  color: Colora().brown,
+                                                  width: 4)),
+                                          child: Container(
+                                            height: 160,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                ClipRRect(
+                                                  child: Image.network(
+                                                    querySnapshot.docs[index]
+                                                        ['imgpath'],
                                                   ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
                                                 ),
-                                              ),
-                                            )
-                                          ],
+                                                Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Center(
+                                                      child: Column(
+                                                        children: [
+                                                          Center(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Text(
+                                                                querySnapshot
+                                                                            .docs[
+                                                                        index]
+                                                                    ['name'],
+                                                                style: GoogleFonts.cairo(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colora()
+                                                                        .green,
+                                                                    fontSize:
+                                                                        TextSized().textSmall +
+                                                                            10),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Center(
+                                                            child: Text(
+                                                              querySnapshot
+                                                                      .docs[
+                                                                          index]
+                                                                          [
+                                                                          'points']
+                                                                      .toString() +
+                                                                  "عدد النقاط ",
+                                                              style: GoogleFonts.cairo(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colora()
+                                                                      .green,
+                                                                  fontSize:
+                                                                      TextSized()
+                                                                          .textTitle),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ));
-        }));
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }

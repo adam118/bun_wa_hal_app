@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:bun_wa_hal/order/finalscreen.dart';
 import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
@@ -194,7 +195,7 @@ class _MyAccountState extends State<MyAccount> {
                             ),
                           ),
                           subtitle: Text(
-                            "53",
+                            userPoints.toString(),
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w600,
                               color: Colora().white,

@@ -28,7 +28,7 @@ class Colora {
 }
 
 class TextSized {
-  final double textSmall = 100;
+  final double textSmall = 10;
   final double textMediam = 20;
   final double textTitle = 25;
   final double textLarg = 30;

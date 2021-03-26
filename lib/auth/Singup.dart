@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bun_wa_hal/auth/Login.dart';
 import 'package:bun_wa_hal/main.dart';
+import 'package:bun_wa_hal/order/finalscreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -86,6 +88,23 @@ class _SingupState extends State<Singup> {
       });
   }
 
+  void addusertofirebase() {
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore.instance.collection("users").doc(firebaseUser.uid).set({
+      "name": name.text.toString(),
+      "phone": _phoneNumberController.text,
+      "birtday": currentDate.day.toString() +
+          "/" +
+          currentDate.month.toString() +
+          "/" +
+          currentDate.year.toString(),
+      "points": userPoints,
+      "email": email.text.toString() ?? 'No email user dont add',
+    }).then((_) {
+      print("success!");
+    });
+  }
+
   void signInWithPhoneNumber() async {
     try {
       // ignore: unused_local_variable
@@ -117,6 +136,8 @@ class _SingupState extends State<Singup> {
         _verificationId = verificationId;
       });
     };
+
+    print(_verificationId);
 
     //autou timeout
     PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
@@ -443,7 +464,9 @@ class _SingupState extends State<Singup> {
                                     try {
                                       // ignore: await_only_futures
                                       await verifyPhoneNumber();
+
                                       sharedPreferences(context);
+                                      addusertofirebase();
                                       setState(() {
                                         OTP = true;
                                       });
