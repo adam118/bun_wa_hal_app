@@ -4,12 +4,11 @@ import 'package:bun_wa_hal/map/map.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart' as database;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
-int userPoints;
 
 // ignore: camel_case_types
 class checkout_Screen_final extends StatefulWidget {
@@ -17,7 +16,11 @@ class checkout_Screen_final extends StatefulWidget {
   _checkout_Screen_finalState createState() => _checkout_Screen_finalState();
 }
 
+int i = 1;
 database.DatabaseReference _counterRef;
+
+FirebaseFirestore firestore =
+    FirebaseFirestore.instance.collection('order').firestore;
 String token;
 DateTime currentDate = DateTime.now();
 
@@ -37,7 +40,10 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
 
   @override
   Widget build(BuildContext context) {
-    Query query = FirebaseFirestore.instance.collection('Items');
+    database.DatabaseReference _counterRef;
+    Query query = FirebaseFirestore.instance.collection('users');
+    var querydatabase =
+        database.FirebaseDatabase.instance.reference().child('orders').push();
 
     return Consumer<Cart>(
       builder: (context, cart, child) {
@@ -56,7 +62,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
             centerTitle: true,
             actions: <Widget>[],
           ),
-          body: StreamBuilder(
+          body: StreamBuilder<QuerySnapshot>(
             stream: query.snapshots(),
             builder: (context, stream) {
               if (stream.connectionState == ConnectionState.waiting) {
@@ -69,9 +75,9 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
               }
 
               QuerySnapshot querySnapshot = stream.data;
-              setState(() {});
-              return SingleChildScrollView(
-                child: Column(
+              return ListView.builder(
+                itemCount: 1,
+                itemBuilder: (context, index) => Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -166,31 +172,17 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                       child: TextFormField(
                                         textAlign: TextAlign.right,
                                         decoration: InputDecoration(
-                                            contentPadding:
-                                                EdgeInsetsDirectional.only(
-                                                    start: 10,
-                                                    end: 10,
-                                                    bottom: 0,
-                                                    top: 10),
                                             labelStyle: GoogleFonts.cairo(
                                                 fontSize: 20,
                                                 color: Colors.brown),
                                             hintStyle: GoogleFonts.cairo(
                                                 fontSize: 20,
                                                 color: Colors.brown),
-                                            hintText:
-                                                "مثل رجاءا لا تقرع الجرس"),
+                                            hintText: " رجاءا لا تقرع الجرس"),
                                         controller: TextEditingController(),
                                       ),
                                     ),
                                   ),
-                                  Text(
-                                    ": ملاحظات",
-                                    style: GoogleFonts.cairo(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black,
-                                        fontSize: 15),
-                                  )
                                 ],
                               ),
                             ],
@@ -211,7 +203,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                             child: FlatButton(
                               child: Center(
                                 child: Text(
-                                  "ارسال الطلب",
+                                  "ارسال الطلب $i",
                                   style: GoogleFonts.cairo(
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
@@ -219,15 +211,40 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                 ),
                               ),
                               onPressed: () async {
-                                await send(context);
+                                send(context, index);
                                 setState(
                                   () {
-                                    userPoints = userPoints +
-                                        querySnapshot
-                                                .docs[cart.basketItems.length]
-                                            ['points'];
+                                    cart.basketItems.length = 0;
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyApp(),
+                                      ),
+                                    );
                                   },
                                 );
+                                var firebaseUser =
+                                    FirebaseAuth.instance.currentUser;
+                                if (database.FirebaseDatabase.instance
+                                        .reference()
+                                        .child('Orders')
+                                        .child('i')
+                                        .child('status')
+                                        .toString() ==
+                                    'shipped') {
+                                  setState(() {
+                                    i++;
+                                  });
+                                } else {
+                                  FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc()
+                                      .update({}).then(
+                                    (_) {
+                                      print("success!");
+                                    },
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -243,15 +260,28 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
       },
     );
   }
+
+  //void addpoints(QuerySnapshot querySnapshot, Cart cart) {
+  //  setState(
+  //    () {
+  //      userPoints =
+  //          userPoints + querySnapshot.docs[cart.basketItems.length]['points'];
+  //    },
+  //  );
+  //}
 }
 
-void send(BuildContext context) async {
+void send(
+  BuildContext context,
+  index,
+) async {
   Map<String, String> map = {
-    'id': fbitem[0].itemId,
-    'title': fbitem[0].title,
-    'price': fbitem[0].price.toString(),
-    'cookingLevel': fbitem[0].cookingLevel,
-    'containHeal': fbitem[0].containHeal.toString(),
+    'id': fbitem[index].itemId,
+    'title': fbitem[index].title,
+    'price': fbitem[index].price.toString(),
+    'cookingLevel': fbitem[index].cookingLevel,
+    'status': 'shipped',
+    'containHeal': fbitem[index].containHeal.toString(),
     'size': size.toString(),
   };
   Map<String, String> info = {
@@ -261,11 +291,8 @@ void send(BuildContext context) async {
     'رقم العمارة': '2',
   };
   _counterRef = database.FirebaseDatabase.instance.reference().child('Orders');
-  _counterRef
-      .push()
-      .set(<String, Map<String, String>>{'order': map, 'info': info});
+  _counterRef.push().set(<String, Map<String, String>>{"i": map});
 }
-
 // void sendDataToFB(Map<String, String> map) {
 //   // Map<String, String> map = {
 //   //   'id': fbitem[0].itemId,
@@ -274,7 +301,7 @@ void send(BuildContext context) async {
 //   //   'cookingLevel': fbitem[0].cookingLevel,
 //   //   'containHeal': fbitem[0].containHeal.toString(),
 //   //   'size': size.toString(),
-//   // };
+//   // };;lll
 //   _counterRef = FirebaseDatabase.instance.reference().child('Orders');
 //   _counterRef.push().set(<String, Map<String, String>>{'order': map});
 // }

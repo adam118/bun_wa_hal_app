@@ -1,9 +1,9 @@
 import 'package:badges/badges.dart';
-import 'package:bun_wa_hal/order/finalscreen.dart';
 import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +34,7 @@ Widget _shoppingCartBadge() {
 }
 
 String email;
+
 String password;
 String phone;
 final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -49,6 +50,7 @@ class _MyAccountState extends State<MyAccount> {
     var obtainPhone = sharedPreferences.getString('phone');
     setState(() {
       email = obtainEmail;
+
       password = obtainPassword;
       phone = obtainPhone;
       name = obtainname;
@@ -60,6 +62,8 @@ class _MyAccountState extends State<MyAccount> {
     super.initState();
     getValiducation();
   }
+
+  Query query = FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {
@@ -95,141 +99,160 @@ class _MyAccountState extends State<MyAccount> {
               })
         ],
       ),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                color: Colors.green,
-                child: Column(
-                  children: [
-                    ListTile(
-                      trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          color: Colors.white,
-                          onPressed: () {
-                            _scaffoldKey.currentState
-                                // ignore: deprecated_member_use
-                                .showSnackBar(nutSupportYet());
-                          }),
-                      subtitle: Text(
-                        name.toString(),
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                      title: Text(
-                        "name",
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          color: Colors.white,
-                          onPressed: () {
-                            _scaffoldKey.currentState
-                                // ignore: deprecated_member_use
-                                .showSnackBar(nutSupportYet());
-                          }),
-                      subtitle: Text(
-                        phone.toString(),
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                      title: Text(
-                        "phone",
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          color: Colors.white,
-                          onPressed: () {
-                            _scaffoldKey.currentState
-                                // ignore: deprecated_member_use
-                                .showSnackBar(nutSupportYet());
-                          }),
-                      subtitle: Text(
-                        password.toString(),
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                      title: Text(
-                        "password",
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                    ),
-                    ExpansionTile(
-                      title: Text(
-                        "نقاطي",
-                        style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
-                          color: Colora().white,
-                        ),
-                      ),
-                      children: [
-                        ListTile(
-                          title: Text(
-                            "المجموع",
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.w600,
-                              color: Colora().white,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: query.snapshots(),
+        builder: (context, stream) {
+          if (stream.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (stream.hasError) {
+            print(stream.error);
+            return Center(child: Text(stream.error.toString()));
+          }
+
+          QuerySnapshot querySnapshot = stream.data;
+          return ListView.builder(
+            itemCount: 1,
+            itemBuilder: (context, index) => Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      color: Colors.green,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            trailing: IconButton(
+                                icon: Icon(Icons.edit),
+                                color: Colors.white,
+                                onPressed: () {
+                                  _scaffoldKey.currentState
+                                      // ignore: deprecated_member_use
+                                      .showSnackBar(nutSupportYet());
+                                }),
+                            subtitle: Text(
+                              name.toString(),
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
+                            ),
+                            title: Text(
+                              "name",
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
                             ),
                           ),
-                          subtitle: Text(
-                            userPoints.toString(),
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.w600,
-                              color: Colora().white,
+                          ListTile(
+                            trailing: IconButton(
+                                icon: Icon(Icons.edit),
+                                color: Colors.white,
+                                onPressed: () {
+                                  _scaffoldKey.currentState
+                                      // ignore: deprecated_member_use
+                                      .showSnackBar(nutSupportYet());
+                                }),
+                            subtitle: Text(
+                              phone.toString(),
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
+                            ),
+                            title: Text(
+                              "phone",
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            "مستبدل",
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.w600,
-                              color: Colora().white,
+                          ListTile(
+                            trailing: IconButton(
+                                icon: Icon(Icons.edit),
+                                color: Colors.white,
+                                onPressed: () {
+                                  _scaffoldKey.currentState
+                                      // ignore: deprecated_member_use
+                                      .showSnackBar(nutSupportYet());
+                                }),
+                            subtitle: Text(
+                              password.toString(),
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
+                            ),
+                            title: Text(
+                              "password",
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
                             ),
                           ),
-                          subtitle: Text("13"),
-                        ),
-                        ListTile(
-                          title: Text(
-                            "منتهية",
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.w600,
-                              color: Colora().white,
+                          ExpansionTile(
+                            title: Text(
+                              "نقاطي",
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                                color: Colora().white,
+                              ),
                             ),
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  "المجموع",
+                                  style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colora().white,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  querySnapshot.docs[index]['points']
+                                      .toString(),
+                                  style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colora().white,
+                                  ),
+                                ),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  "مستبدل",
+                                  style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colora().white,
+                                  ),
+                                ),
+                                subtitle: Text("13"),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  "منتهية",
+                                  style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colora().white,
+                                  ),
+                                ),
+                                subtitle: Text("52"),
+                              ),
+                            ],
                           ),
-                          subtitle: Text("52"),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

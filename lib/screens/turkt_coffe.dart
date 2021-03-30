@@ -4,6 +4,7 @@ import 'package:bun_wa_hal/model/item.dart';
 import 'package:bun_wa_hal/order/finalscreen.dart';
 import 'package:bun_wa_hal/order/getfrompalce.dart';
 import 'package:bun_wa_hal/style/styli.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,9 @@ String groupval3;
 DatabaseReference _counterRef;
 double th = 9;
 double fth = 13;
+String quarter;
+String half;
+String one;
 bool heal = false;
 int indexs = fbitem.length;
 double maxValue = maxValue > 0 ? maxValue : 1000;
@@ -59,6 +63,8 @@ class coffee1 extends StatefulWidget {
 
 // ignore: camel_case_types
 class _coffee1State extends State<coffee1> {
+  var query = cloud.FirebaseFirestore.instance.collection('Items');
+
   @override
   void initState() {
     super.initState();
@@ -215,388 +221,444 @@ class _coffee1State extends State<coffee1> {
     }
 
     return MaterialApp(
-        // theme: isDark ? ThemeData.light() : ThemeData.dark(),
-        debugShowCheckedModeBanner: false,
-        home: Consumer<Cart>(builder: (
+      theme: isDark ? ThemeData.light() : ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
+      home: Consumer<Cart>(
+        builder: (
           context,
           cart,
           child,
         ) {
           return Scaffold(
-              key: _scaffoldKey,
-              appBar: AppBar(
-                leading: IconButton(
-                    color: Colora().brown,
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => MyApp()));
-                    }),
-                backgroundColor: Colors.white,
-                iconTheme: IconThemeData(color: Colors.brown),
-                elevation: 0,
-                title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    'Images/logo.png',
-                    scale: 10,
-                  ),
+            key: _scaffoldKey,
+            appBar: AppBar(
+              leading: IconButton(
+                  color: Colora().brown,
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MyApp()));
+                  }),
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(color: Colors.brown),
+              elevation: 0,
+              title: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  'Images/logo.png',
+                  scale: 10,
                 ),
-                centerTitle: true,
-                actions: <Widget>[
-                  cart.basketItems.length == 0
-                      ? IconButton(
-                          icon: Icon(Icons.shopping_cart),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => check_out()));
-                          })
-                      : _shoppingCartBadge()
-                ],
               ),
-              body:
-                  ListView(physics: NeverScrollableScrollPhysics(), children: [
-                Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
+              centerTitle: true,
+              actions: <Widget>[
+                cart.basketItems.length == 0
+                    ? IconButton(
+                        icon: Icon(Icons.shopping_cart),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => check_out()));
+                        })
+                    : _shoppingCartBadge()
+              ],
+            ),
+            body: StreamBuilder<cloud.QuerySnapshot>(
+              stream: query.snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return Center(child: Text(snapshot.error.toString()));
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                cloud.QuerySnapshot querySnapshot = snapshot.data;
+                return ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) => Column(
                     children: [
-                      //Image
-
-                      Hero(
-                        tag: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => coffee1()));
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    side: BorderSide(
-                                        color: Colors.brown, width: 4)),
-                                child: Container(
-                                  height: 150,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      ClipRRect(
-                                        child: Image.asset(
-                                          'Images/coffee.png',
-                                          scale: 7,
-                                        ),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(18.0),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Column(
-                                              children: [
-                                                Center(
-                                                  child: Text(
-                                                    items[indexs].title,
-                                                    style: GoogleFonts.cairo(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colora().green,
-                                                        fontSize: 20),
-                                                  ),
-                                                ),
-                                                Center(
-                                                  child: Text(
-                                                    "Turkish coffee",
-                                                    style: GoogleFonts.cairo(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colora().green,
-                                                        fontSize: 20),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //end Image
-
-                      //addons(size)
-
                       Container(
-                        width: double.infinity,
-                        color: Colora().green,
-                        child: Center(
-                          child: Text(
-                            "الوزن",
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                fontSize: 20),
-                          ),
-                        ),
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Spacer(),
-                          Container(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Text("وقية",
-                                    style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    )),
-                                (items[indexs].quarter)
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                          Container(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Text("نصف كيلو",
-                                    style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    )),
-                                (items[indexs].half)
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                          Container(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Text("كيلو",
-                                    style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    )),
-                                (items[indexs].one)
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                        ],
-                      ),
-
-                      //end addons(size)
-
-                      //addons(cookinglevel)
-
-                      Container(
-                        width: double.infinity,
-                        color: Colora().green,
-                        child: Center(
-                          child: Text(
-                            "درجة التحميص",
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                fontSize: 20),
-                          ),
-                        ),
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Spacer(),
-                          Container(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "فاتحة",
-                                  style: GoogleFonts.cairo(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                (items[indexs].blond)
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                          Container(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "وسط",
-                                  style: GoogleFonts.cairo(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                (items[indexs].medium)
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                          Container(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Text("غامقة",
-                                    style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    )),
-                                (items[indexs].dark)
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                        ],
-                      ),
-
-                      //end addons(cookinglevel)
-
-                      //addons (Heal)
-
-                      Container(
-                        width: double.infinity,
-                        color: Colora().green,
-                        child: Center(
-                          child: Text(
-                            "اضافات",
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                fontSize: 20),
-                          ),
-                        ),
-                      ),
-
-                      (items[indexs].dep),
-
-                      //end addons(Heal)
-
-                      //add to cart buttons
-
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 0, bottom: 0, right: 28, left: 28),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Container(
-                                  child: Column(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        // ignore: deprecated_member_use
-                                        child: FlatButton(
-                                            color: Colora().green,
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  price.toString(),
-                                                  style: GoogleFonts.cairo(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          TextSized().textLarg),
-                                                ),
-                                                Text(
-                                                  "  JD",
-                                                  style: GoogleFonts.cairo(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors.brown,
-                                                      fontSize: 22),
-                                                ),
-                                              ],
+                            //Image
+                            Hero(
+                              tag: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        querySnapshot.docs[index]['points'] + 2;
+                                      });
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => coffee1()));
+                                    },
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: BorderSide(
+                                              color: Colora().brown, width: 4)),
+                                      child: Container(
+                                        height: 160,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            ClipRRect(
+                                              child: Image.network(
+                                                querySnapshot.docs[index]
+                                                    ['imgpath'],
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                             ),
-                                            splashColor: Colora().green,
-                                            onPressed: () {}),
+                                            Center(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Center(
+                                                  child: Column(
+                                                    children: [
+                                                      Center(
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                            querySnapshot
+                                                                    .docs[index]
+                                                                ['name'],
+                                                            style: GoogleFonts.cairo(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colora()
+                                                                    .green,
+                                                                fontSize:
+                                                                    TextSized()
+                                                                            .textSmall +
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Center(
+                                                        child: Text(
+                                                          querySnapshot
+                                                                  .docs[index]
+                                                                      ['points']
+                                                                  .toString() +
+                                                              "عدد النقاط ",
+                                                          style: GoogleFonts.cairo(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: Colora()
+                                                                  .green,
+                                                              fontSize:
+                                                                  TextSized()
+                                                                      .textTitle),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            Column(
+                            Container(
+                              width: double.infinity,
+                              color: Colora().green,
+                              child: Center(
+                                child: Text(
+                                  "الوزن",
+                                  style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontSize: 20),
+                                ),
+                              ),
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                // ignore: deprecated_member_use
-                                FlatButton(
-                                  onPressed: () {
-                                    _showSnackBar();
-
-                                    setState(() {
-                                      cart.add(items[indexs]);
-
-                                      displayAddd(context);
-
-                                      setState(() {
-                                        fbitem.add(
-                                          FireBaseItem(
-                                            title: (items[indexs].title),
-                                            price: (items[indexs].price),
-                                            cookingLevel: cookinglevels,
-                                            containHeal: heal,
-                                            size: currentsliderval,
-                                          ),
-                                        );
-
-                                        print(FireBaseItem(
-                                          title: (items[indexs].title),
-                                        ));
-                                      });
-                                    });
-                                  },
-                                  child: Image.asset(
-                                    "Images/add.png",
-                                    scale: 1.5,
+                                Spacer(),
+                                Container(
+                                  height: 70,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                          querySnapshot.docs[indexs]['size']
+                                                      ['وقية']
+                                                  .toString() +
+                                              "kg",
+                                          style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          )),
+                                      (items[indexs].quarter)
+                                    ],
                                   ),
                                 ),
+                                Spacer(),
+                                Container(
+                                  height: 70,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                          querySnapshot.docs[indexs]['size']
+                                                      ['نص كيلو']
+                                                  .toString() +
+                                              "kg",
+                                          style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          )),
+                                      (items[indexs].half)
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  height: 70,
+                                  child: Row(
+                                    children: [
+                                      Text("كيلو",
+                                          style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          )),
+                                      (items[indexs].one)
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
                               ],
+                            ),
+
+                            //end addons(size)
+
+                            //addons(cookinglevel)
+
+                            Container(
+                              width: double.infinity,
+                              color: Colora().green,
+                              child: Center(
+                                child: Text(
+                                  "درجة التحميص",
+                                  style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontSize: 20),
+                                ),
+                              ),
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Spacer(),
+                                Container(
+                                  height: 70,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "فاتحة",
+                                        style: GoogleFonts.cairo(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      (items[indexs].blond)
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  height: 70,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "وسط",
+                                        style: GoogleFonts.cairo(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      (items[indexs].medium)
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  height: 70,
+                                  child: Row(
+                                    children: [
+                                      Text("غامقة",
+                                          style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          )),
+                                      (items[indexs].dark)
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                              ],
+                            ),
+                            Container(
+                              width: double.infinity,
+                              color: Colora().green,
+                              child: Center(
+                                child: Text(
+                                  "اضافات",
+                                  style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontSize: 20),
+                                ),
+                              ),
+                            ),
+                            (items[indexs].dep),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 0, bottom: 0, right: 28, left: 28),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Container(
+                                        child: Column(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              // ignore: deprecated_member_use
+                                              child: FlatButton(
+                                                  color: Colora().green,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        price.toString(),
+                                                        style: GoogleFonts.cairo(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.white,
+                                                            fontSize:
+                                                                TextSized()
+                                                                    .textLarg),
+                                                      ),
+                                                      Text(
+                                                        "  JD",
+                                                        style:
+                                                            GoogleFonts.cairo(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .brown,
+                                                                fontSize: 22),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  splashColor: Colora().green,
+                                                  onPressed: () {}),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      // ignore: deprecated_member_use
+                                      FlatButton(
+                                        onPressed: () {
+                                          _showSnackBar();
+
+                                          setState(
+                                            () {
+                                              cart.add(items[indexs]);
+                                              displayAddd(context);
+                                              setState(
+                                                () {
+                                                  fbitem.add(
+                                                    FireBaseItem(
+                                                      title:
+                                                          (items[indexs].title),
+                                                      price:
+                                                          (items[indexs].price),
+                                                      cookingLevel:
+                                                          cookinglevels,
+                                                      containHeal: heal,
+                                                      size: currentsliderval,
+                                                    ),
+                                                  );
+
+                                                  print(
+                                                    FireBaseItem(
+                                                      title:
+                                                          (items[indexs].title),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Image.asset(
+                                          "Images/add.png",
+                                          scale: 1.5,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
                             )
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
-                ),
-              ]));
-        }));
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
 Widget _shoppingCartBadge() {
-  return Consumer<Cart>(builder: (context, cart, child) {
-    return Badge(
+  return Consumer<Cart>(
+    builder: (context, cart, child) {
+      return Badge(
         position: BadgePosition.topEnd(top: 0, end: 3),
         animationDuration: Duration(milliseconds: 3),
         animationType: BadgeAnimationType.scale,
@@ -605,40 +667,44 @@ Widget _shoppingCartBadge() {
           style: TextStyle(color: Colors.white),
         ),
         child: IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => check_out()));
-            }));
-  });
+          icon: Icon(Icons.shopping_cart),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => check_out()));
+          },
+        ),
+      );
+    },
+  );
 }
 
 void displayAddd(BuildContext context) {
   showDialog(
-      context: context,
-      builder: (context) {
-        Future.delayed(
-            Duration(
-              seconds: 1,
-            ), () {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => MyApp()));
-        });
-        return AlertDialog(
-          elevation: TextSized().textLarg,
-          backgroundColor: Colora().green,
-          title: Container(
-            height: 100,
-            width: 200,
-            child: Center(
-              child: Text(
-                "تمت اضافت هاذا المنتج بنجاح",
-                style: GoogleFonts.cairo(fontSize: 15, color: Colors.white),
-              ),
+    context: context,
+    builder: (context) {
+      Future.delayed(
+          Duration(
+            seconds: 1,
+          ), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MyApp()));
+      });
+      return AlertDialog(
+        elevation: TextSized().textLarg,
+        backgroundColor: Colora().green,
+        title: Container(
+          height: 100,
+          width: 200,
+          child: Center(
+            child: Text(
+              "تمت اضافت هاذا المنتج بنجاح",
+              style: GoogleFonts.cairo(fontSize: 15, color: Colors.white),
             ),
           ),
-        );
-      });
+        ),
+      );
+    },
+  );
 }
 
 // ignore: camel_case_types
@@ -652,10 +718,12 @@ class _check_outState extends State<check_out> {
   @override
   void initState() {
     super.initState();
-    Firebase.initializeApp().whenComplete(() {
-      print("completed");
-      setState(() {});
-    });
+    Firebase.initializeApp().whenComplete(
+      () {
+        print("completed");
+        setState(() {});
+      },
+    );
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -743,88 +811,85 @@ class _check_outState extends State<check_out> {
                       child: Container(
                         height: 350,
                         child: ListView.builder(
-                            itemCount: cart.basketItems.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    height: MediaQuery.of(context).size.height,
-                                    child: ListView.builder(
-                                        physics: ScrollPhysics(),
-                                        itemCount: cart.basketItems.length,
-                                        itemBuilder: (context, index) {
-                                          return Dismissible(
-                                            background: Container(
-                                              color: Colors.red,
-                                              child: Center(
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
+                          itemCount: cart.basketItems.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  child: ListView.builder(
+                                    physics: ScrollPhysics(),
+                                    itemCount: cart.basketItems.length,
+                                    itemBuilder: (context, index) {
+                                      return Dismissible(
+                                        background: Container(
+                                          color: Colors.red,
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
                                             ),
-                                            onDismissed: (_) {
-                                              cart.remove(
-                                                  cart.basketItems[index]);
-                                            },
-                                            key: UniqueKey(),
-                                            child: Card(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  side: BorderSide(
-                                                      color: Colors.brown,
-                                                      width: 2.5)),
-                                              child: ListTile(
-                                                contentPadding:
-                                                    const EdgeInsets.all(10.0),
-                                                subtitle: Column(
-                                                  children: [
-                                                    (cart.basketItems[index]
-                                                        .dep),
-                                                    Text(currentsliderval
-                                                        .toInt()
-                                                        .toString()),
-                                                    Text(cookinglevels),
-                                                  ],
-                                                ),
-                                                trailing: (cart
-                                                    .basketItems[index].image),
-                                                leading: Text(cart
-                                                    .basketItems[index].quantity
+                                          ),
+                                        ),
+                                        onDismissed: (_) {
+                                          cart.remove(cart.basketItems[index]);
+                                        },
+                                        key: UniqueKey(),
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              side: BorderSide(
+                                                  color: Colors.brown,
+                                                  width: 2.5)),
+                                          child: ListTile(
+                                            contentPadding:
+                                                const EdgeInsets.all(10.0),
+                                            subtitle: Column(
+                                              children: [
+                                                (cart.basketItems[index].dep),
+                                                Text(currentsliderval
+                                                    .toInt()
                                                     .toString()),
-                                                title: Column(
-                                                  children: <Widget>[
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Text(
-                                                      cart.basketItems[index]
-                                                          .title,
-                                                      textAlign:
-                                                          TextAlign.right,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Text(
-                                                        cart.basketItems[index]
-                                                            .price
-                                                            .toString(),
-                                                        textAlign:
-                                                            TextAlign.right),
-                                                  ],
-                                                ),
-                                              ),
+                                                Text(cookinglevels),
+                                              ],
                                             ),
-                                          );
-                                        }),
+                                            trailing:
+                                                (cart.basketItems[index].image),
+                                            leading: Text(cart
+                                                .basketItems[index].quantity
+                                                .toString()),
+                                            title: Column(
+                                              children: <Widget>[
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  cart.basketItems[index].title,
+                                                  textAlign: TextAlign.right,
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                    cart.basketItems[index]
+                                                        .price
+                                                        .toString(),
+                                                    textAlign: TextAlign.right),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
-                              );
-                            }),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                     Row(
@@ -844,10 +909,12 @@ class _check_outState extends State<check_out> {
                                 groupValue: getFromPlaced,
                                 onChanged: (val) {
                                   getFromPlaced = val;
-                                  setState(() {
-                                    getFromPlaces = true;
-                                    if (getFromPlaces == true) {}
-                                  });
+                                  setState(
+                                    () {
+                                      getFromPlaces = true;
+                                      if (getFromPlaces == true) {}
+                                    },
+                                  );
                                 },
                                 value: 'getfrom',
                               ),
@@ -862,20 +929,24 @@ class _check_outState extends State<check_out> {
                             child: Row(
                               children: [
                                 Spacer(),
-                                Text("توصيل",
-                                    style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    )),
+                                Text(
+                                  "توصيل",
+                                  style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
                                 Radio(
                                   groupValue: getFromPlaced,
                                   onChanged: (val) {
                                     getFromPlaced = val;
 
-                                    setState(() {
-                                      getFromPlaces = false;
-                                      if (getFromPlaces == false) {}
-                                    });
+                                    setState(
+                                      () {
+                                        getFromPlaces = false;
+                                        if (getFromPlaces == false) {}
+                                      },
+                                    );
                                   },
                                   value: 'delevery',
                                 ),

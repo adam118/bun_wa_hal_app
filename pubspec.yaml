@@ -41,7 +41,9 @@ dependencies:
   geolocator: ^7.0.1
 
   #code
-  rxdart: ^0.26.0
+  rxdart: ^0.26.0 
+  data_connection_checker: ^0.3.4
+  connectivity: ^0.4.2
   shared_preferences: ^2.0.5
 
   #ui

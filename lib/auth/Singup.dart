@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:bun_wa_hal/Splash/Splash.dart';
 import 'package:bun_wa_hal/auth/Login.dart';
+import 'package:bun_wa_hal/auth/myAcount.dart';
 import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/order/finalscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -90,7 +92,7 @@ class _SingupState extends State<Singup> {
 
   void addusertofirebase() {
     var firebaseUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore.instance.collection("users").doc(firebaseUser.uid).set({
+    FirebaseFirestore.instance.collection("users").doc().set({
       "name": name.text.toString(),
       "phone": _phoneNumberController.text,
       "birtday": currentDate.day.toString() +
@@ -98,7 +100,7 @@ class _SingupState extends State<Singup> {
           currentDate.month.toString() +
           "/" +
           currentDate.year.toString(),
-      "points": userPoints,
+      "points": 1,
       "email": email.text.toString() ?? 'No email user dont add',
     }).then((_) {
       print("success!");
@@ -480,7 +482,9 @@ class _SingupState extends State<Singup> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             title: Text(
-                                                "الرجاء ادخال كلمة مرور او بريد صحيح"),
+                                              "الرجاء ادخال كلمة مرور او بريد صحيح" +
+                                                  error.toString(),
+                                            ),
                                           );
                                         },
                                       );
@@ -521,6 +525,7 @@ class _SingupState extends State<Singup> {
   sharedPreferences(BuildContext context) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
+
     sharedPreferences.setString('phone', _phoneNumberController.text);
     sharedPreferences.setString('password', pass.text.toString());
     sharedPreferences.setString('name', name.text.toString());
@@ -531,15 +536,13 @@ class _SingupState extends State<Singup> {
 }
 
 Future<void> send(BuildContext context) async {
-  user = FirebaseDatabase.instance.reference().child('user');
-  userinfo = FirebaseDatabase.instance.reference().child('user_info');
-  user.push().set(<String, String>{
+  var firebaseUser = FirebaseAuth.instance.currentUser;
+  FirebaseFirestore.instance.collection("users").doc(firebaseUser.uid).set({
     'الاسم': name.text,
     'البريد الالكتروني': email.text,
     'رقم الهاتف': phone.text,
+    'عدد النقاط': 1,
+  }, SetOptions(merge: true)).then((_) {
+    print("success!");
   });
-  userinfo.push().set(<String, dynamic>{
-    'الرقم التسلسلي': '76162846830',
-    'تاريخ انشاء الحساب': DateTime.now().toString(),
-  }).whenComplete(() => print("sent successfully"));
 }

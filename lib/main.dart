@@ -27,6 +27,8 @@ Future<void> main() async {
   ));
 }
 
+int points;
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -305,9 +307,7 @@ class _MyAppState extends State<MyApp> {
                 }
 
                 QuerySnapshot querySnapshot = stream.data;
-                setState(() {
-                  userPoints = querySnapshot.docs[0]['points'];
-                });
+
                 return ListView.builder(
                   itemCount: 1,
                   itemBuilder: (context, index) => SingleChildScrollView(
@@ -368,6 +368,11 @@ class _MyAppState extends State<MyApp> {
                                       borderRadius: BorderRadius.circular(20),
                                       child: InkWell(
                                         onTap: () {
+                                          setState(() {
+                                            querySnapshot.docs[index]
+                                                    ['points'] +
+                                                2;
+                                          });
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -389,9 +394,15 @@ class _MyAppState extends State<MyApp> {
                                                       .spaceBetween,
                                               children: [
                                                 ClipRRect(
-                                                  child: Image.network(
-                                                    querySnapshot.docs[index]
-                                                        ['imgpath'],
+                                                  child: FadeInImage(
+                                                    image: NetworkImage(
+                                                      querySnapshot.docs[index]
+                                                          ['imgpath'],
+                                                    ),
+                                                    height: 150,
+                                                    width: 150,
+                                                    placeholder: AssetImage(
+                                                        'Images/logo.png'),
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(20),
