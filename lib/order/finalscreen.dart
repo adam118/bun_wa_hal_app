@@ -203,7 +203,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                             child: FlatButton(
                               child: Center(
                                 child: Text(
-                                  "ارسال الطلب $i",
+                                  "ارسال الطلب",
                                   style: GoogleFonts.cairo(
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
@@ -223,28 +223,28 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                     );
                                   },
                                 );
-                                var firebaseUser =
-                                    FirebaseAuth.instance.currentUser;
-                                if (database.FirebaseDatabase.instance
-                                        .reference()
-                                        .child('Orders')
-                                        .child('i')
-                                        .child('status')
-                                        .toString() ==
-                                    'shipped') {
-                                  setState(() {
-                                    i++;
-                                  });
-                                } else {
-                                  FirebaseFirestore.instance
-                                      .collection("users")
-                                      .doc()
-                                      .update({}).then(
-                                    (_) {
-                                      print("success!");
-                                    },
-                                  );
-                                }
+                                // var firebaseUser =
+                                //     FirebaseAuth.instance.currentUser;
+                                // if (database.FirebaseDatabase.instance
+                                //         .databaseURL('https://bun-wa-hal-app-default-rtdb.firebaseio.com/')
+                                //         .child('Orders')
+                                //         .child('i')
+                                //         .child('status')
+                                //         .toString() ==
+                                //     'shipped') {
+                                //   setState(() {
+                                //     i++;
+                                //   });
+                                // } else {
+                                //   FirebaseFirestore.instance
+                                //       .collection("users")
+                                //       .doc()
+                                //       .update({}).then(
+                                //     (_) {
+                                //       print("success!");
+                                //     },
+                                //   );
+                                // }
                               },
                             ),
                           ),
