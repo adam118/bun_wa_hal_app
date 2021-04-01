@@ -43,23 +43,23 @@ class _choseState extends State<chose> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: Container(
-                        height: 50,
-                        width: 100,
+                        height: 60,
+                        width: 120,
                         color: Colors.green,
                         child: TextButton(
-                            child: Text(
-                              "انشاء حساب",
+                          child: Text("انشاء حساب",
                               style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 20),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Singup()));
-                            }),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 20,
+                              )),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Singup()));
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -69,8 +69,8 @@ class _choseState extends State<chose> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: Container(
-                        height: 50,
-                        width: 100,
+                        height: 60,
+                        width: 120,
                         color: Colors.green,
                         child: TextButton(
                             child: Text(

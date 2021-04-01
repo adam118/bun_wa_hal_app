@@ -34,8 +34,7 @@ class _SplashState extends State<Splash> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        password == null ? chose() : MyApp()));
+                    builder: (context) => phone == null ? chose() : MyApp()));
           },
         );
       },
@@ -49,7 +48,7 @@ class _SplashState extends State<Splash> {
       return Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => password == null ? chose() : MyApp()));
+              builder: (context) => phone == null ? chose() : MyApp()));
     } else if (dataconnection == DataConnectionStatus.connected) {
       return showDialog(
         context: context,

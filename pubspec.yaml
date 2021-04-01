@@ -32,13 +32,13 @@ dependencies:
   firebase_database: ^6.1.0
   cloud_firestore: ^1.0.2
   firebase_messaging: ^9.0.1
-  firebase_auth: ^1.0.1
+  firebase_auth: 
 
   #google & location
   google_fonts: ^2.0.0
   google_maps_flutter: ^2.0.1
   location: ^4.1.1
-  geolocator: ^7.0.1
+  geolocator: ^5.3.1
 
   #code
   rxdart: ^0.26.0 
@@ -47,6 +47,8 @@ dependencies:
   shared_preferences: ^2.0.5
 
   #ui
+  flutter_datetime_picker: ^1.5.0
+  location_permissions: ^3.0.0+1
   route_animation_helper: ^1.0.0+5
   lottie: ^1.0.1
   flutter_svg: ^0.19.3

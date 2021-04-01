@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +30,7 @@ class Singup extends StatefulWidget {
 }
 
 //var
-bool showhide = false;
+bool showhide = true;
 DatabaseReference user;
 DatabaseReference userinfo;
 //firebase
@@ -69,43 +70,39 @@ class _SingupState extends State<Singup> {
   void initState() {
     super.initState();
     _auth.setLanguageCode("en-ch");
-
+    setState(() {
+      pickedDate = DateTime(2000, 1, 1);
+    });
     Firebase.initializeApp().whenComplete(() {
       print("completed");
-      setState(() {});
     });
   }
 
+  DateTime pickedDate;
   // Example code for registration.
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: currentDate,
-        lastDate: new DateTime.now().add(new Duration(days: currentDate.day)),
-        firstDate: DateTime(1900));
-    if (pickedDate != null && pickedDate != currentDate)
-      setState(() {
-        currentDate = pickedDate;
-      });
-  }
 
   void addusertofirebase() {
     var firebaseUser = FirebaseAuth.instance.currentUser;
     FirebaseFirestore.instance.collection("users").doc().set({
       "name": name.text.toString(),
       "phone": _phoneNumberController.text,
-      "birtday": currentDate.day.toString() +
+      "birtday": pickedDate.day.toString() +
           "/" +
-          currentDate.month.toString() +
+          pickedDate.month.toString() +
           "/" +
-          currentDate.year.toString(),
+          pickedDate.year.toString(),
       "points": 1,
       "email": email.text.toString() ?? 'No email user dont add',
     }).then((_) {
       print("success!");
     });
   }
+
+  final FirebaseAuth _authlog = FirebaseAuth.instance;
+  bool autovalidatephone = false;
+  bool autovalidatepassword = false;
+  bool autovalidatepasswordrepeat = false;
+  bool autovalidatename = false;
 
   void signInWithPhoneNumber() async {
     try {
@@ -121,7 +118,11 @@ class _SingupState extends State<Singup> {
           builder: (context) => MyApp(),
         ),
       );
-    } catch (e) {}
+    } catch (e) {
+      SnackBar(
+        content: Text("error , pleas try again $e"),
+      );
+    }
   }
 
   void verifyPhoneNumber() async {
@@ -135,7 +136,7 @@ class _SingupState extends State<Singup> {
     PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
       setState(() {
-        _verificationId = verificationId;
+        _verificationId = forceResendingToken.toString();
       });
     };
 
@@ -154,7 +155,7 @@ class _SingupState extends State<Singup> {
     try {
       await _auth.verifyPhoneNumber(
           phoneNumber: _phoneNumberController.text,
-          timeout: const Duration(minutes: 2),
+          timeout: Duration(minutes: 2),
           verificationCompleted: verificationCompleted,
           verificationFailed: verificationFailed,
           codeSent: codeSent,
@@ -172,6 +173,43 @@ class _SingupState extends State<Singup> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _selectDate(BuildContext context) async {
+      DatePicker.showDatePicker(context,
+          showTitleActions: true,
+          minTime: DateTime(1900),
+          maxTime: DateTime(2005 ?? 1),
+          theme: DatePickerTheme(
+              headerColor: Colors.green.withOpacity(0.7),
+              backgroundColor: Colors.green.withOpacity(0.7),
+              itemStyle: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+              doneStyle: TextStyle(color: Colors.white, fontSize: 16)),
+          onChanged: (date) {
+        if (date != null) {
+          setState(() {
+            pickedDate = date;
+          });
+        }
+      }, onConfirm: (date) {
+        if (date != null) {
+          setState(() {
+            pickedDate = date;
+          });
+        }
+      }, currentTime: DateTime.now(), locale: LocaleType.en);
+      // final DateTime pickedDate = await showDatePicker(
+      //     context: context,
+      //     initialDate: currentDate,
+      //     lastDate: new DateTime.now().add(new Duration(days: currentDate.day)),
+      //     firstDate: DateTime(1900));
+      // if (pickedDate != null && pickedDate != currentDate) {
+      //   setState(() {
+      //     currentDate = pickedDate;
+      //   });
+    }
+
     return Form(
       key: _formKdey,
       child: Scaffold(
@@ -212,6 +250,12 @@ class _SingupState extends State<Singup> {
                               }
                               return null;
                             },
+                            autovalidate: autovalidatename,
+                            onChanged: (_) {
+                              setState(() {
+                                autovalidatename = true;
+                              });
+                            },
                             expands: false,
                             maxLength: 15,
                             decoration: InputDecoration(
@@ -230,37 +274,24 @@ class _SingupState extends State<Singup> {
                       padding: const EdgeInsets.all(4.0),
                       child: Container(
                         child: ListTile(
-                          trailing: Icon(Icons.mail, color: Colors.brown),
-                          title: TextFormField(
-                            textAlign: TextAlign.right,
-                            onSaved: (value) {},
-                            expands: false,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsetsDirectional.only(
-                                    start: 6, end: 6, bottom: 0, top: 0),
-                                hintStyle: GoogleFonts.cairo(
-                                    fontSize: 20, color: Colors.brown),
-                                hintText: "البريد الالكتروني(اختياري)"),
-                            controller: email,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        child: ListTile(
                           trailing: Icon(Icons.call, color: Colors.brown),
                           title: TextFormField(
                             textAlign: TextAlign.right,
+                            autovalidate: autovalidatephone,
+                            onChanged: (_) {
+                              setState(() {
+                                autovalidatephone = true;
+                              });
+                            },
                             validator: (value) {
                               if (value.isEmpty) {
                                 return 'هاذا الحقل مطلوب';
-                              } else if (value.length < 10) {
+                              } else if (value.length < 13) {
                                 return 'الرجاء ادخال رقم هاتف صحيح';
                               } else if (!regex.hasMatch(value)) {
                                 return 'الرجاء ادخال رقم هاتف صحيح , عدم وضع احرف او رموز';
+                              } else if (value.startsWith('+9620')) {
+                                return 'الرجاء حذف ال 0 بعد +962';
                               }
                               return null;
                             },
@@ -291,6 +322,12 @@ class _SingupState extends State<Singup> {
                         ),
                         trailing: Icon(Icons.lock, color: Colors.brown),
                         title: TextFormField(
+                          autovalidate: autovalidatepassword,
+                          onChanged: (_) {
+                            setState(() {
+                              autovalidatepassword = true;
+                            });
+                          },
                           textAlign: TextAlign.right,
                           validator: (value) {
                             if (value.isEmpty) {
@@ -307,8 +344,8 @@ class _SingupState extends State<Singup> {
                               contentPadding: EdgeInsetsDirectional.only(
                                   start: 6, end: 6, bottom: 0, top: 0),
                               hintStyle: GoogleFonts.cairo(
-                                  fontSize: 20, color: Colors.brown),
-                              hintText: "كلمة المرور"),
+                                  fontSize: 15, color: Colors.brown),
+                              hintText: "كلمة المرور لا تقل عن 8 احرف"),
                           controller: pass,
                         ),
                       ),
@@ -320,13 +357,19 @@ class _SingupState extends State<Singup> {
                           trailing: Icon(Icons.repeat, color: Colors.brown),
                           title: TextFormField(
                             textAlign: TextAlign.right,
+                            autovalidate: autovalidatepasswordrepeat,
+                            onChanged: (_) {
+                              setState(() {
+                                autovalidatepasswordrepeat = true;
+                              });
+                            },
                             validator: (value) {
                               if (value.isEmpty) {
                                 return 'هاذا الحقل مطلوب';
                               } else if (value.length < 8) {
                                 return 'كلمة السر قصيرة جدا';
                               } else if (value != pass.text) {
-                                return 'لا يوجد تتطابق';
+                                return 'لا يوجد تتطابق في كلمة السر';
                               }
                               return null;
                             },
@@ -352,17 +395,45 @@ class _SingupState extends State<Singup> {
                         },
                         child: Container(
                           child: ListTile(
+                            subtitle: Text("تاريخ الميلاد اختياري"),
                             trailing: Icon(Icons.cake, color: Colors.brown),
                             title: Container(
                               child: Text(
-                                currentDate.year.toString() +
+                                pickedDate.year.toString() +
                                     "/" +
-                                    currentDate.month.toString() +
+                                    pickedDate.month.toString() +
                                     "/" +
-                                    currentDate.day.toString(),
+                                    pickedDate.day.toString(),
                                 textAlign: TextAlign.right,
                               ),
                             ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        child: ListTile(
+                          trailing: Icon(Icons.mail, color: Colors.brown),
+                          title: TextFormField(
+                            textAlign: TextAlign.right,
+                            onChanged: (value) {
+                              if (_formKdey.currentState.validate()) {
+                                return null;
+                              } else {
+                                return null;
+                              }
+                            },
+                            expands: false,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsetsDirectional.only(
+                                    start: 6, end: 6, bottom: 0, top: 0),
+                                hintStyle: GoogleFonts.cairo(
+                                    fontSize: 20, color: Colors.brown),
+                                hintText: "البريد الالكتروني(اختياري)"),
+                            controller: email,
                           ),
                         ),
                       ),
@@ -422,21 +493,6 @@ class _SingupState extends State<Singup> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Row(
-                                children: [
-                                  Spacer(),
-                                  InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LoginScreen()));
-                                      },
-                                      child: Text(
-                                          " تملك حسابا ؟ سجل دخول        ")),
-                                ],
-                              )
                             ],
                           )
                         : Container(
@@ -466,7 +522,20 @@ class _SingupState extends State<Singup> {
                                     try {
                                       // ignore: await_only_futures
                                       await verifyPhoneNumber();
-
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          Future.delayed(
+                                            Duration(
+                                              seconds: 1,
+                                            ),
+                                            () {},
+                                          );
+                                          return AlertDialog(
+                                            title: Text("سيتم ارسال رمز تحقق"),
+                                          );
+                                        },
+                                      );
                                       sharedPreferences(context);
                                       addusertofirebase();
                                       setState(() {
@@ -512,6 +581,26 @@ class _SingupState extends State<Singup> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Spacer(),
+                          InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            LoginScreenPage()));
+                              },
+                              child: Text(" تملك حسابا ؟ سجل دخول        ")),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ],

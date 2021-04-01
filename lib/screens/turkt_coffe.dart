@@ -278,67 +278,93 @@ class _coffee1State extends State<coffee1> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 cloud.QuerySnapshot querySnapshot = snapshot.data;
-                return ListView.builder(
-                  itemCount: 1,
-                  itemBuilder: (context, index) => Column(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height,
-                        child: Column(
-                          children: [
-                            //Image
-                            Hero(
-                              tag: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        querySnapshot.docs[index]['points'] + 2;
-                                      });
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => coffee1()));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          side: BorderSide(
-                                              color: Colora().brown, width: 4)),
-                                      child: Container(
-                                        height: 160,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            ClipRRect(
-                                              child: Image.network(
-                                                querySnapshot.docs[index]
-                                                    ['imgpath'],
+                if (snapshot.connectionState == ConnectionState.active) {
+                  return ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context, index) => Column(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            children: [
+                              //Image
+                              Hero(
+                                tag: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          querySnapshot.docs[index]['points'] +
+                                              2;
+                                        });
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    coffee1()));
+                                      },
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            side: BorderSide(
+                                                color: Colora().brown,
+                                                width: 4)),
+                                        child: Container(
+                                          height: 160,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ClipRRect(
+                                                child: Image.network(
+                                                  querySnapshot.docs[index]
+                                                      ['imgpath'],
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Center(
-                                                  child: Column(
-                                                    children: [
-                                                      Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
+                                              Center(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Center(
+                                                    child: Column(
+                                                      children: [
+                                                        Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Text(
+                                                              querySnapshot
+                                                                          .docs[
+                                                                      index]
+                                                                  ['name'],
+                                                              style: GoogleFonts.cairo(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colora()
+                                                                      .green,
+                                                                  fontSize:
+                                                                      TextSized()
+                                                                              .textSmall +
+                                                                          10),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Center(
                                                           child: Text(
                                                             querySnapshot
                                                                     .docs[index]
-                                                                ['name'],
+                                                                        [
+                                                                        'points']
+                                                                    .toString() +
+                                                                "عدد النقاط ",
                                                             style: GoogleFonts.cairo(
                                                                 fontWeight:
                                                                     FontWeight
@@ -347,209 +373,194 @@ class _coffee1State extends State<coffee1> {
                                                                     .green,
                                                                 fontSize:
                                                                     TextSized()
-                                                                            .textSmall +
-                                                                        10),
+                                                                        .textTitle),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Center(
-                                                        child: Text(
-                                                          querySnapshot
-                                                                  .docs[index]
-                                                                      ['points']
-                                                                  .toString() +
-                                                              "عدد النقاط ",
-                                                          style: GoogleFonts.cairo(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color: Colora()
-                                                                  .green,
-                                                              fontSize:
-                                                                  TextSized()
-                                                                      .textTitle),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              color: Colora().green,
-                              child: Center(
-                                child: Text(
-                                  "الوزن",
-                                  style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontSize: 20),
+                              Container(
+                                width: double.infinity,
+                                color: Colora().green,
+                                child: Center(
+                                  child: Text(
+                                    "الوزن",
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontSize: 20),
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Spacer(),
-                                Container(
-                                  height: 70,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                          querySnapshot.docs[indexs]['size']
-                                                      ['وقية']
-                                                  .toString() +
-                                              "kg",
-                                          style: GoogleFonts.cairo(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          )),
-                                      (items[indexs].quarter)
-                                    ],
-                                  ),
-                                ),
-                                Spacer(),
-                                Container(
-                                  height: 70,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                          querySnapshot.docs[indexs]['size']
-                                                      ['نص كيلو']
-                                                  .toString() +
-                                              "kg",
-                                          style: GoogleFonts.cairo(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          )),
-                                      (items[indexs].half)
-                                    ],
-                                  ),
-                                ),
-                                Spacer(),
-                                Container(
-                                  height: 70,
-                                  child: Row(
-                                    children: [
-                                      Text("كيلو",
-                                          style: GoogleFonts.cairo(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          )),
-                                      (items[indexs].one)
-                                    ],
-                                  ),
-                                ),
-                                Spacer(),
-                              ],
-                            ),
-
-                            //end addons(size)
-
-                            //addons(cookinglevel)
-
-                            Container(
-                              width: double.infinity,
-                              color: Colora().green,
-                              child: Center(
-                                child: Text(
-                                  "درجة التحميص",
-                                  style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontSize: 20),
-                                ),
-                              ),
-                            ),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Spacer(),
-                                Container(
-                                  height: 70,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "فاتحة",
-                                        style: GoogleFonts.cairo(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      (items[indexs].blond)
-                                    ],
-                                  ),
-                                ),
-                                Spacer(),
-                                Container(
-                                  height: 70,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "وسط",
-                                        style: GoogleFonts.cairo(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      (items[indexs].medium)
-                                    ],
-                                  ),
-                                ),
-                                Spacer(),
-                                Container(
-                                  height: 70,
-                                  child: Row(
-                                    children: [
-                                      Text("غامقة",
-                                          style: GoogleFonts.cairo(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          )),
-                                      (items[indexs].dark)
-                                    ],
-                                  ),
-                                ),
-                                Spacer(),
-                              ],
-                            ),
-                            Container(
-                              width: double.infinity,
-                              color: Colora().green,
-                              child: Center(
-                                child: Text(
-                                  "اضافات",
-                                  style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontSize: 20),
-                                ),
-                              ),
-                            ),
-                            (items[indexs].dep),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 0, bottom: 0, right: 28, left: 28),
-                                    child: ClipRRect(
+                                  Spacer(),
+                                  Container(
+                                    height: 70,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                            querySnapshot.docs[indexs]['size']
+                                                        ['وقية']
+                                                    .toString() +
+                                                "kg",
+                                            style: GoogleFonts.cairo(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black,
+                                            )),
+                                        (items[indexs].quarter)
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    height: 70,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                            querySnapshot.docs[indexs]['size']
+                                                        ['نص كيلو']
+                                                    .toString() +
+                                                "kg",
+                                            style: GoogleFonts.cairo(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black,
+                                            )),
+                                        (items[indexs].half)
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    height: 70,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                            querySnapshot.docs[indexs]['size']
+                                                        ['كيلو']
+                                                    .toString() +
+                                                "kg",
+                                            style: GoogleFonts.cairo(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black,
+                                            )),
+                                        (items[indexs].one)
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                ],
+                              ),
+
+                              //end addons(size)
+
+                              //addons(cookinglevel)
+
+                              Container(
+                                width: double.infinity,
+                                color: Colora().green,
+                                child: Center(
+                                  child: Text(
+                                    "درجة التحميص",
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontSize: 20),
+                                  ),
+                                ),
+                              ),
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Spacer(),
+                                  Container(
+                                    height: 70,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "فاتحة",
+                                          style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        (items[indexs].blond)
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    height: 70,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "وسط",
+                                          style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        (items[indexs].medium)
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    height: 70,
+                                    child: Row(
+                                      children: [
+                                        Text("غامقة",
+                                            style: GoogleFonts.cairo(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black,
+                                            )),
+                                        (items[indexs].dark)
+                                      ],
+                                    ),
+                                  ),
+                                  Spacer(),
+                                ],
+                              ),
+                              Container(
+                                width: double.infinity,
+                                color: Colora().green,
+                                child: Center(
+                                  child: Text(
+                                    "اضافات",
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontSize: 20),
+                                    /*
+                                        color : Colors.blue*/
+                                  ),
+                                ),
+                              ),
+                              (items[indexs].dep),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
                                       child: Container(
                                         child: Column(
@@ -592,11 +603,23 @@ class _coffee1State extends State<coffee1> {
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Column(
-                                    children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
                                       // ignore: deprecated_member_use
-                                      FlatButton(
+                                      child: FlatButton(
+                                        color: Colora().green,
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "اضافة للسلة",
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      TextSized().textLarg - 5),
+                                            ),
+                                          ],
+                                        ),
                                         onPressed: () {
                                           _showSnackBar();
 
@@ -630,22 +653,18 @@ class _coffee1State extends State<coffee1> {
                                             },
                                           );
                                         },
-                                        child: Image.asset(
-                                          "Images/add.png",
-                                          scale: 1.5,
-                                        ),
                                       ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
+                      ],
+                    ),
+                  );
+                }
               },
             ),
           );
@@ -682,25 +701,42 @@ void displayAddd(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) {
-      Future.delayed(
-          Duration(
-            seconds: 1,
-          ), () {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyApp()));
-      });
       return AlertDialog(
-        elevation: TextSized().textLarg,
-        backgroundColor: Colora().green,
-        title: Container(
-          height: 100,
-          width: 200,
-          child: Center(
-            child: Text(
-              "تمت اضافت هاذا المنتج بنجاح",
-              style: GoogleFonts.cairo(fontSize: 15, color: Colors.white),
+        actions: [
+          Container(
+            width: MediaQuery.of(context).size.width / 4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FlatButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => check_out()));
+                },
+                color: Colors.brown,
+                child: Text("تاكيد الطلب"),
+              ),
             ),
           ),
+          Container(
+            width: MediaQuery.of(context).size.width / 4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FlatButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MyApp()));
+                },
+                color: Colors.green,
+                child: Text("استمرار"),
+              ),
+            ),
+          ),
+        ],
+        elevation: TextSized().textLarg,
+        title: Text(
+          "تمت اضافة هاذا المنتج بنجاح",
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontSize: 15, color: Colors.black),
         ),
       );
     },
@@ -755,13 +791,18 @@ class _check_outState extends State<check_out> {
             actions: <Widget>[
               Stack(
                 children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          cart.basketItems.length = 0;
-                        });
-                      })
+                  cart.basketItems.length == 0
+                      ? Container(
+                          height: 1,
+                          width: 1,
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              cart.basketItems.length = 0;
+                            });
+                          })
                 ],
               ),
             ],
@@ -775,7 +816,7 @@ class _check_outState extends State<check_out> {
                       ),
                       Center(
                         child: Text(
-                          "السلة فارغة اشتري اشي",
+                          "السلة فارغة",
                           style: GoogleFonts.cairo(
                               color: Colors.black, fontSize: 28),
                         ),
@@ -788,7 +829,7 @@ class _check_outState extends State<check_out> {
                         child: RaisedButton(
                           color: Colora().green,
                           child: Text(
-                            "   يلا",
+                            "تسوق الان",
                             style: GoogleFonts.cairo(
                                 color: Colors.white, fontSize: 28),
                           ),
@@ -811,7 +852,7 @@ class _check_outState extends State<check_out> {
                       child: Container(
                         height: 350,
                         child: ListView.builder(
-                          itemCount: cart.basketItems.length,
+                          itemCount: 1,
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),

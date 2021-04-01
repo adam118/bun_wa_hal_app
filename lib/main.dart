@@ -152,8 +152,8 @@ class _MyAppState extends State<MyApp> {
             drawer: Theme(
               data: Theme.of(context).copyWith(
                 // Set the transparency here
-                canvasColor: Colors.white.withOpacity(
-                    0), //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+                canvasColor: Colors.black.withOpacity(
+                    0.7), //or any other color you want. e.g Colors.blue.withOpacity(0.5)
               ),
               child: Drawer(
                 elevation: 5,
