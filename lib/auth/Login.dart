@@ -1,3 +1,4 @@
+import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/style/styli.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,11 +31,16 @@ class Login extends StatefulWidget {
 
 final _formKey = GlobalKey<FormState>();
 TextEditingController phone = TextEditingController();
+TextEditingController smsController = TextEditingController();
 TextEditingController pass = TextEditingController();
 bool showhide = false;
 
 class _LoginState extends State<Login> {
   bool codeSent;
+  String _verificationId;
+
+  String phonelabel = "رقم الهاتف";
+  String passlabel = "كلمة المرور";
   @override
   void initState() {
     super.initState();
@@ -50,9 +56,31 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
+  // void signInWithPhoneNumber() async {
+  //   try {
+  //     // ignore: unused_local_variable
+
+  //     final AuthCredential credential = PhoneAuthProvider.credential(
+  //       verificationId: _verificationId,
+  //       smsCode:  smsController.text,
+  //     );
+
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => MyApp(),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     SnackBar(
+  //       content: Text("error , pleas try again $e"),
+  //     );
+  //   }
+  // }
+
   String virId;
 
-  TextEditingController _phoneNumberController =
+  TextEditingController phoneNumberController =
       TextEditingController(text: '+962');
 
   // Example code for registration.
@@ -105,7 +133,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    Pattern pattern = r'^(?:[+0]9)?[0-9]{10}$';
+    var sizewidth = MediaQuery.of(context).size.width;
+    var sizeheight = MediaQuery.of(context).size.height;
+    print("h" + sizeheight.toString() + "w" + sizewidth.toString());
+    Pattern pattern = r'^\+[1-9]{1}[0-9]{3,14}$';
     RegExp regex = new RegExp(pattern);
     return Form(
       key: _formKey,
@@ -157,14 +188,26 @@ class _LoginState extends State<Login> {
                             onSaved: (value) {},
                             expands: false,
                             maxLength: 13,
+                            onTap: () {
+                              setState(() {
+                                passlabel = "";
+                              });
+                            },
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                                contentPadding: EdgeInsetsDirectional.only(
-                                    start: 6, end: 6, bottom: 0, top: 0),
-                                hintStyle: GoogleFonts.cairo(
-                                    fontSize: 20, color: Colors.brown),
-                                hintText: "رقم الهاتف"),
-                            controller: _phoneNumberController,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(width: 2),
+                                  gapPadding: 10),
+                              contentPadding: EdgeInsetsDirectional.only(
+                                  start: 6, end: 6, bottom: 0, top: 0),
+                              labelStyle: GoogleFonts.cairo(
+                                  fontSize: 20,
+                                  color: Colors.brown,
+                                  decoration: TextDecoration.lineThrough),
+                              labelText: phonelabel,
+                            ),
+                            controller: phoneNumberController,
                           ),
                         ),
                       ),
@@ -183,6 +226,11 @@ class _LoginState extends State<Login> {
                           ),
                           trailing: Icon(Icons.lock, color: Colora().brown),
                           title: TextFormField(
+                            onTap: () {
+                              setState(() {
+                                passlabel = "";
+                              });
+                            },
                             textAlign: TextAlign.right,
                             validator: (value) {
                               if (value.isEmpty) {
@@ -196,11 +244,9 @@ class _LoginState extends State<Login> {
                             expands: false,
                             maxLength: 16,
                             decoration: InputDecoration(
-                                contentPadding: EdgeInsetsDirectional.only(
-                                    start: 6, end: 6, bottom: 0, top: 0),
-                                hintStyle: GoogleFonts.cairo(
+                                labelStyle: GoogleFonts.cairo(
                                     fontSize: 20, color: Colora().brown),
-                                hintText: "كلمة المرور"),
+                                labelText: "كلمة المرور"),
                             controller: pass,
                           ),
                         ),

@@ -864,63 +864,50 @@ class _check_outState extends State<check_out> {
                                     physics: ScrollPhysics(),
                                     itemCount: cart.basketItems.length,
                                     itemBuilder: (context, index) {
-                                      return Dismissible(
-                                        background: Container(
-                                          color: Colors.red,
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.delete,
-                                              color: Colors.white,
-                                            ),
+                                      return Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            side: BorderSide(
+                                                color: Colors.brown,
+                                                width: 2.5)),
+                                        child: ListTile(
+                                          contentPadding:
+                                              const EdgeInsets.all(10.0),
+                                          subtitle: Column(
+                                            children: [
+                                              (cart.basketItems[index].dep),
+                                              Text(currentsliderval
+                                                  .toInt()
+                                                  .toString()),
+                                              Text(cookinglevels),
+                                            ],
                                           ),
-                                        ),
-                                        onDismissed: (_) {
-                                          cart.remove(cart.basketItems[index]);
-                                        },
-                                        key: UniqueKey(),
-                                        child: Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              side: BorderSide(
-                                                  color: Colors.brown,
-                                                  width: 2.5)),
-                                          child: ListTile(
-                                            contentPadding:
-                                                const EdgeInsets.all(10.0),
-                                            subtitle: Column(
-                                              children: [
-                                                (cart.basketItems[index].dep),
-                                                Text(currentsliderval
-                                                    .toInt()
-                                                    .toString()),
-                                                Text(cookinglevels),
-                                              ],
-                                            ),
-                                            trailing:
-                                                (cart.basketItems[index].image),
-                                            leading: Text(cart
-                                                .basketItems[index].quantity
-                                                .toString()),
-                                            title: Column(
-                                              children: <Widget>[
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Text(
-                                                  cart.basketItems[index].title,
-                                                  textAlign: TextAlign.right,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                    cart.basketItems[index]
-                                                        .price
-                                                        .toString(),
-                                                    textAlign: TextAlign.right),
-                                              ],
-                                            ),
+                                          trailing:
+                                              (cart.basketItems[index].image),
+                                          leading: IconButton(
+                                              icon: Icon(Icons.delete),
+                                              onPressed: () {
+                                                cart.remove(
+                                                    cart.basketItems[index]);
+                                              }),
+                                          title: Column(
+                                            children: <Widget>[
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                cart.basketItems[index].title,
+                                                textAlign: TextAlign.right,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                  cart.basketItems[index].price
+                                                      .toString(),
+                                                  textAlign: TextAlign.right),
+                                            ],
                                           ),
                                         ),
                                       );

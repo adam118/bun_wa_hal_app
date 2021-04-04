@@ -149,12 +149,8 @@ class _MyAppState extends State<MyApp> {
         ) {
           return Scaffold(
             key: _scaffoldKey,
-            drawer: Theme(
-              data: Theme.of(context).copyWith(
-                // Set the transparency here
-                canvasColor: Colors.black.withOpacity(
-                    0.7), //or any other color you want. e.g Colors.blue.withOpacity(0.5)
-              ),
+            drawer: Container(
+              width: 220,
               child: Drawer(
                 elevation: 5,
                 child: ListView(
@@ -165,34 +161,30 @@ class _MyAppState extends State<MyApp> {
                     Container(
                       height: 200,
                       width: 100,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: <Color>[
-                            Colors.black.withOpacity(0),
-                            Colora().green
-                          ],
-                        ),
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Hero(
-                            tag: logoTage,
-                            child: Image.asset(
-                              'Images/logo.png',
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(50.0),
+                            child: Hero(
+                              tag: logoTage,
+                              child: Image.asset(
+                                'Images/logo.png',
+                              ),
                             ),
-                          )),
+                          ),
+                          Spacer(),
+                        ],
+                      ),
                     ),
                     ListTile(
                       leading: Icon(
                         Icons.home_outlined,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       title: Text(
                         'الرئيسية',
                         style: GoogleFonts.cairo(
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                       onTap: () {
@@ -208,24 +200,24 @@ class _MyAppState extends State<MyApp> {
                       },
                       leading: Icon(
                         Icons.account_box_outlined,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       title: Text(
                         'حسابي',
                         style: GoogleFonts.cairo(
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                     ),
                     ListTile(
                       leading: Icon(
                         Icons.shopping_cart_outlined,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       title: Text(
                         'العربة',
                         style: GoogleFonts.cairo(
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                       onTap: () {
@@ -238,12 +230,12 @@ class _MyAppState extends State<MyApp> {
                     ListTile(
                         leading: Icon(
                           Icons.account_circle_outlined,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                         title: Text(
                           'تسديل الخروج',
                           style: GoogleFonts.cairo(
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                         ),
                         onTap: () async {
@@ -283,14 +275,6 @@ class _MyAppState extends State<MyApp> {
                                   builder: (context) => check_out()));
                         })
                     : _shoppingCartBadge(),
-                IconButton(
-                    icon: isDark ? dark : light,
-                    tooltip: 'dark/light mood',
-                    onPressed: () {
-                      setState(() {
-                        isDark = !isDark;
-                      });
-                    })
               ],
             ),
             // body:
@@ -369,9 +353,6 @@ class _MyAppState extends State<MyApp> {
                                       child: InkWell(
                                         onTap: () {
                                           setState(() {
-                                            querySnapshot.docs[index]
-                                                    ['points'] +
-                                                2;
                                           });
                                           Navigator.push(
                                               context,

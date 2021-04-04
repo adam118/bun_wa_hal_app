@@ -105,7 +105,7 @@ class _MyAccountState extends State<MyAccount> {
 
       setState(() {
         _currentAddress =
-            "${place.postalCode} ${place.locality}, ${place.country}";
+            "${place.postalCode}+ ${place.locality}, ${place.country}";
       });
     } catch (e) {
       print(e);

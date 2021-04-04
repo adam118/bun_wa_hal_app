@@ -10,6 +10,8 @@ class chose extends StatefulWidget {
   _choseState createState() => _choseState();
 }
 
+double elevation = 0;
+
 // ignore: camel_case_types
 class _choseState extends State<chose> {
   @override
@@ -27,33 +29,39 @@ class _choseState extends State<chose> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    top: 0.0, bottom: 150, left: 70, right: 70),
+                    top: 0.0, bottom: 120, left: 70, right: 70),
                 child: Center(
                   child: Image.asset(
                     'Images/logo.png',
                   ),
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0.0, bottom: 0, left: 50, right: 50),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Container(
-                        height: 60,
-                        width: 120,
-                        color: Colors.green,
-                        child: TextButton(
-                          child: Text("انشاء حساب",
+                        width: 200,
+                        height: 50,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          color: Color(0xff663A2B),
+                          child: Center(
+                            child: Text(
+                              "إنشــاء حساب",
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                                 fontSize: 20,
-                              )),
+                              ),
+                            ),
+                          ),
                           onPressed: () {
+                            setState(() {});
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -62,23 +70,24 @@ class _choseState extends State<chose> {
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 30.0, bottom: 30, left: 50, right: 50),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Container(
-                        height: 60,
-                        width: 120,
-                        color: Colors.green,
-                        child: TextButton(
-                            child: Text(
-                              "تسجيل الدخول",
-                              style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 20),
+                        width: 200,
+                        height: 50,
+                        child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            color: Color(0xff49B04D),
+                            child: Center(
+                              child: Text(
+                                "تسجيل الدخول",
+                                style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 20),
+                              ),
                             ),
                             onPressed: () {
                               Navigator.push(
@@ -88,8 +97,8 @@ class _choseState extends State<chose> {
                             }),
                       ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
               //   Padding(
               //     padding: const EdgeInsets.all(18.0),
