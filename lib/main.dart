@@ -1,13 +1,13 @@
+import 'dart:async';
+
 import 'package:badges/badges.dart';
-import 'package:bun_wa_hal/auth/myAcount.dart';
-import 'package:bun_wa_hal/order/finalscreen.dart';
-import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/Splash/Splash.dart';
 import 'package:bun_wa_hal/auth/chose.dart';
+import 'package:bun_wa_hal/auth/myAcount.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/model/item.dart';
+import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +42,9 @@ final List<String> imgList = [
 ];
 
 Widget _shoppingCartBadge() {
-  return Consumer<Cart>(builder: (context, cart, child) {
-    return Badge(
+  return Consumer<Cart>(
+    builder: (context, cart, child) {
+      return Badge(
         position: BadgePosition.topEnd(top: 0, end: 3),
         animationDuration: Duration(milliseconds: 3),
         animationType: BadgeAnimationType.scale,
@@ -52,12 +53,15 @@ Widget _shoppingCartBadge() {
           style: TextStyle(color: Colors.white),
         ),
         child: IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => check_out()));
-            }));
-  });
+          icon: Icon(Icons.shopping_cart),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => check_out()));
+          },
+        ),
+      );
+    },
+  );
 }
 
 bool isDark = true;
@@ -69,77 +73,43 @@ List<FireBaseItem> getDataFromFireBase() {
   return fireBaseItem;
 }
 
+int _currentPage = 0;
+PageController _pageController = PageController(
+  initialPage: 0,
+);
+
 class _MyAppState extends State<MyApp> {
   String tokeID;
 
   @override
   void initState() {
     super.initState();
+    Timer.periodic(
+      Duration(seconds: 2),
+      (Timer timer) {
+        if (_currentPage < 2) {
+          _currentPage++;
+        } else {
+          _currentPage = 0;
+        }
+
+        _pageController.animateToPage(
+          _currentPage,
+          duration: Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     GlobalObjectKey<ScaffoldState> _scaffoldKey =
         GlobalObjectKey<ScaffoldState>(context);
-    final List<UserItem> items = [
-      UserItem(
-        title: 'قهوة تركية',
-        image: InkWell(
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => coffee1()));
-          },
-          child: Image.network(
-            "https://www.mozzaik.shop/media/image/da/51/c2/DSC_0688.jpg",
-          ),
-        ),
-        price: 2.0,
-      ),
-      UserItem(
-        title: 'قهوة تركية',
-        image: InkWell(
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => coffee1()));
-          },
-          child: Image.network(
-            "https://feedo.shop/image/cache/catalog/Products%20Images/Soft-Drinks-Tea-Coffee/Tea-Coffee-Hot-Drinks/Coffee/Haseeb-Without-Cardamom-Coffee-200g-550x550.jpg",
-          ),
-        ),
-        price: 1500,
-      ),
-      UserItem(
-        title: 'قهوة تركية',
-        image: InkWell(
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => coffee1()));
-          },
-          child: Image.network(
-            "https://a.nooncdn.com/t_desktop-pdp-v1/v1532409190/N14456792A_1.jpg",
-            scale: 6.5,
-          ),
-        ),
-        price: 5.5,
-      ),
-      UserItem(
-        title: 'قهوة تركية',
-        image: InkWell(
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => coffee1()));
-          },
-          child: Image.network(
-            "https://zamrad.shop/image/cache/catalog/product/coffee/4529685241-550x550.jpg",
-          ),
-        ),
-        price: 310,
-      ),
-    ];
+
     Query query = FirebaseFirestore.instance.collection('Items');
 
     return MaterialApp(
-      theme: isDark ? ThemeData.light() : ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       home: Consumer<Cart>(
         builder: (
@@ -293,166 +263,188 @@ class _MyAppState extends State<MyApp> {
                 QuerySnapshot querySnapshot = stream.data;
 
                 return ListView.builder(
+                  physics: ScrollPhysics(),
                   itemCount: 1,
                   itemBuilder: (context, index) => SingleChildScrollView(
                     child: Column(
                       children: [
+                        //ImageSlider
                         Container(
-                            height: 200,
-                            child: CarouselSlider(
-                              carouselController: CarouselController(),
-                              options: CarouselOptions(
-                                autoPlay: true,
-                                height: 301,
-                                initialPage: 2,
+                          height: 200,
+                          child: PageView(
+                            controller: _pageController,
+                            allowImplicitScrolling: true,
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: new AssetImage("Images/image2.png"),
+                                    fit: BoxFit.scaleDown,
+                                  ),
+                                ),
                               ),
-                              items: imgList
-                                  .map((item) => Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: ClipRRect(
-                                          child: Container(
-                                            child: Center(
-                                                child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              child: Image.asset(item,
-                                                  fit: BoxFit.contain,
-                                                  scale: 0.5,
-                                                  width: 1000),
-                                            )),
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                            )),
+                              Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: new AssetImage("Images/image1.png"),
+                                    fit: BoxFit.scaleDown,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: new AssetImage("Images/image3.png"),
+                                    fit: BoxFit.scaleDown,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        //Title
                         Padding(
                           padding: const EdgeInsets.all(28.0),
                           child: Text(
                             'منتجاتنا',
                             style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.bold,
                                 color: Colora().green,
-                                fontSize: TextSized().textTitle),
+                                fontSize: TextSized().textTitle + 5),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: double.infinity,
-                            child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: querySnapshot.size,
-                              itemBuilder: (context, index) {
-                                return Hero(
-                                  tag: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                          });
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      coffee1()));
-                                        },
-                                        child: Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              side: BorderSide(
-                                                  color: Colora().brown,
-                                                  width: 4)),
-                                          child: Container(
-                                            height: 160,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                        //ItemBuilder
+                        Container(
+                          height: MediaQuery.of(context).size.height,
+                          width: double.infinity,
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: querySnapshot.size,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {});
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => coffee1()));
+                                    },
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: BorderSide(
+                                              color: Colora().brown, width: 3)),
+                                      child: Container(
+                                        height: 200,
+                                        width: 125,
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 150,
+                                              width: 150,
+                                              child: Image.network(
+                                                querySnapshot.docs[index]
+                                                        ['imgpath'] ??
+                                                    "",
+                                              ),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
                                               children: [
-                                                ClipRRect(
-                                                  child: FadeInImage(
-                                                    image: NetworkImage(
-                                                      querySnapshot.docs[index]
-                                                          ['imgpath'],
-                                                    ),
-                                                    height: 150,
-                                                    width: 150,
-                                                    placeholder: AssetImage(
-                                                        'Images/logo.png'),
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                                SizedBox(
+                                                  height: 20,
                                                 ),
-                                                Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Center(
-                                                      child: Column(
-                                                        children: [
-                                                          Center(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Text(
-                                                                querySnapshot
-                                                                            .docs[
-                                                                        index]
-                                                                    ['name'],
-                                                                style: GoogleFonts.cairo(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colora()
-                                                                        .green,
-                                                                    fontSize:
-                                                                        TextSized().textSmall +
-                                                                            10),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Center(
-                                                            child: Text(
-                                                              querySnapshot
-                                                                      .docs[
-                                                                          index]
-                                                                          [
-                                                                          'points']
-                                                                      .toString() +
-                                                                  "عدد النقاط ",
-                                                              style: GoogleFonts.cairo(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: Colora()
-                                                                      .green,
-                                                                  fontSize:
-                                                                      TextSized()
-                                                                          .textTitle),
-                                                            ),
-                                                          ),
-                                                        ],
+                                                Container(
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        querySnapshot
+                                                                    .docs[index]
+                                                                ['name'] ??
+                                                            'error',
+                                                        style: GoogleFonts.cairo(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colora().green,
+                                                            fontSize:
+                                                                TextSized()
+                                                                    .textTitle),
                                                       ),
-                                                    ),
+                                                      Text(
+                                                        querySnapshot
+                                                                    .docs[index]
+                                                                ['des'] ??
+                                                            'error',
+                                                        style: GoogleFonts.cairo(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colora().grey,
+                                                            fontSize:
+                                                                TextSized()
+                                                                    .textSmall),
+                                                      ),
+                                                    ],
                                                   ),
-                                                )
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Container(
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        querySnapshot.docs[
+                                                                        index][
+                                                                    'stander'] +
+                                                                "g    " ??
+                                                            'error',
+                                                        style: GoogleFonts.cairo(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colora().green,
+                                                            fontSize: TextSized()
+                                                                    .textMediam +
+                                                                5),
+                                                      ),
+                                                      Text(
+                                                        querySnapshot
+                                                                    .docs[index]
+                                                                        [
+                                                                        'price']
+                                                                    .toString() +
+                                                                "JD    " ??
+                                                            'error',
+                                                        style: GoogleFonts.cairo(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colora().green,
+                                                            fontSize: TextSized()
+                                                                .textMediam),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ],
                                             ),
-                                          ),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],

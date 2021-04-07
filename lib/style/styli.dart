@@ -12,8 +12,8 @@ class Sizes {
 }
 
 class Colora {
-  Color green = Colors.green;
-  Color brown = Colors.brown;
+  Color brown = Color(0xff663A2B);
+  Color green = Color(0xff7A9C3E);
   Color grey = Colors.grey;
   Color white = Colors.white;
   Color black = Colors.black;

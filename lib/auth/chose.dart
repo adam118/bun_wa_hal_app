@@ -52,7 +52,7 @@ class _choseState extends State<chose> {
                           color: Color(0xff663A2B),
                           child: Center(
                             child: Text(
-                              "إنشــاء حساب",
+                              "انشــاء حساب",
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -79,7 +79,7 @@ class _choseState extends State<chose> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
                             ),
-                            color: Color(0xff49B04D),
+                            color: Color(0xff789C3B),
                             child: Center(
                               child: Text(
                                 "تسجيل الدخول",

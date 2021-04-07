@@ -34,7 +34,7 @@ class UserItem {
   Radio quarter;
   Radio half;
   Radio one;
-  CheckboxListTile dep;
+  ListTile dep;
 
   UserItem({
     this.price,

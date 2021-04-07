@@ -1,0 +1,28 @@
+// Container(
+                        //   height: 200,
+                        //   width: MediaQuery.of(context).size.width,
+                        //   child: CarouselSlider(
+                        //     carouselController: CarouselController(),
+                        //     options: CarouselOptions(
+                        //       autoPlay: true,
+                        //       height: 300,
+                        //       pageSnapping: true,
+                        //       disableCenter: true,
+                        //
+                        //       initialPage: 2,
+                        //     ),
+                        //     items: imgList
+                        //         .map(
+                        //           (item) => Padding(
+                        //             padding: const EdgeInsets.all(10),
+                        //             child: ClipRRect(
+                        //               borderRadius: BorderRadius.circular(20),
+                        //               child: Image.asset(
+                        //                 item,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         )
+                        //         .toList(),
+                        //   ),
+                        // ),

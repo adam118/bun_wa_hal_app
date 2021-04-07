@@ -28,6 +28,8 @@ class Singup extends StatefulWidget {
   _SingupState createState() => _SingupState();
 }
 
+String makeacount = "إنشاء حساب";
+
 //var
 bool showhide = true;
 DatabaseReference user;
@@ -167,7 +169,7 @@ class _SingupState extends State<Singup> {
 
     try {
       await _auth.verifyPhoneNumber(
-          phoneNumber: _phoneNumberController.text,
+          phoneNumber: "+962" + _phoneNumberController.text,
           timeout: Duration(minutes: 2),
           verificationCompleted: verificationCompleted,
           verificationFailed: verificationFailed,
@@ -186,6 +188,8 @@ class _SingupState extends State<Singup> {
 
   @override
   Widget build(BuildContext context) {
+    Color colorbirth = Colors.grey;
+
     Future<void> _selectDate(BuildContext context) async {
       DatePicker.showDatePicker(context,
           showTitleActions: true,
@@ -202,6 +206,7 @@ class _SingupState extends State<Singup> {
           onChanged: (date) {
         if (date != null) {
           setState(() {
+            colorbirth = Colors.black;
             pickedDate = date;
           });
         }
@@ -231,7 +236,6 @@ class _SingupState extends State<Singup> {
           pickedDate.day.toString(),
     );
 
-    String makeacount = "انشاء حساب";
     ScrollController controller = ScrollController();
     return Form(
       key: _formKdey,
@@ -256,7 +260,7 @@ class _SingupState extends State<Singup> {
                       makeacount,
                       style: GoogleFonts.cairo(
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey.withOpacity(0.7),
+                          color: Colors.black,
                           fontSize: 30),
                     )),
                   ),
@@ -273,7 +277,7 @@ class _SingupState extends State<Singup> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "الاسم",
+                                    "الإسم",
                                     textAlign: TextAlign.right,
                                     style: GoogleFonts.cairo(
                                         fontWeight: FontWeight.w600,
@@ -332,7 +336,7 @@ class _SingupState extends State<Singup> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 5.0, right: 25, left: 25, bottom: 5),
+                            top: 5, right: 25, left: 25, bottom: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -363,6 +367,7 @@ class _SingupState extends State<Singup> {
                                     ),
                                     trailing: Text("962+"),
                                     title: TextFormField(
+                                      keyboardType: TextInputType.number,
                                       validator: (value) {
                                         if (value.isEmpty) {
                                           return 'هاذا الحقل مطلوب';
@@ -377,7 +382,7 @@ class _SingupState extends State<Singup> {
                                       },
                                       textAlign: TextAlign.left,
                                       autovalidate: autovalidatephone,
-                                      onChanged: (_) {
+                                      onSaved: (_) {
                                         setState(() {
                                           autovalidatephone = true;
                                         });
@@ -403,7 +408,7 @@ class _SingupState extends State<Singup> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 5.0, right: 25, left: 25, bottom: 5),
+                            top: 5, right: 25, left: 25, bottom: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -494,7 +499,7 @@ class _SingupState extends State<Singup> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 5.0, right: 25, left: 25, bottom: 5),
+                            top: 5, right: 25, left: 25, bottom: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -588,14 +593,14 @@ class _SingupState extends State<Singup> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 5.0, right: 25, left: 25, bottom: 5),
+                            top: 5, right: 25, left: 25, bottom: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "تاريخ الميلاد(أختياري)",
+                                "تاريخ الميلاد(إختياري)",
                                 textAlign: TextAlign.right,
                                 style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w600,
@@ -603,105 +608,39 @@ class _SingupState extends State<Singup> {
                                     fontSize: 15),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                _selectDate(context);
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    side: BorderSide(
-                                        color: Color(0xff663A2B), width: 1)),
-                                child: ListTile(
-                                  trailing:
-                                      Icon(Icons.cake, color: Colors.brown),
-                                  title: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ListTile(
-                                      title: Directionality(
-                                        textDirection: TextDirection.rtl,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            FocusScope.of(context).unfocus();
-                                          },
-                                          child: TextFormField(
-                                            textAlign: TextAlign.right,
-                                            autovalidate:
-                                                autovalidatepasswordrepeat,
-                                            onSaved: (_) {
-                                              setState(() {
-                                                autovalidatepasswordrepeat =
-                                                    true;
-                                              });
-                                            },
-                                            cursorHeight: 0,
-                                            cursorWidth: 0,
-                                            cursorColor: Colors.white,
-                                            expands: false,
-                                            onTap: () {
-                                              _selectDate(context);
-                                            },
-                                            decoration: InputDecoration(
-                                              counterStyle: TextStyle(
-                                                color: Colors.grey
-                                                    .withOpacity(0.7),
-                                              ),
-                                              // border: OutlineInputBorder(
-                                              //     borderRadius: BorderRadius.circular(20),
-                                              //     borderSide: BorderSide(width: 2),
-                                              //     gapPadding: 10),
-                                              //
-                                              //
-                                              counterText: "",
-                                              contentPadding:
-                                                  EdgeInsetsDirectional.only(
-                                                      start: 20,
-                                                      end: 6,
-                                                      bottom: 0,
-                                                      top: 0),
-                                              border: InputBorder.none,
-                                              hintStyle: GoogleFonts.cairo(
-                                                  fontSize: 15,
-                                                  color: Colors.grey),
-                                            ),
-                                            controller: _birthController,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      OTP == true
-                          ? Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
+                            Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(
+                                      color: Color(0xff663A2B), width: 1)),
+                              child: ListTile(
+                                trailing: Icon(Icons.cake, color: Colors.brown),
+                                title: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Directionality(
+                                    textDirection: TextDirection.rtl,
                                     child: TextFormField(
+                                      style: TextStyle(
+                                          color: colorbirth,
+                                          decorationColor: colorbirth),
                                       textAlign: TextAlign.right,
-                                      validator: (value) {
-                                        if (value.isEmpty) {
-                                          return 'هاذا الحقل مطلوب';
-                                        } else if (value.length < 6) {
-                                          return 'الرجاء ادخال رمز تحقق صحيح';
-                                        } else if (!regex.hasMatch(value)) {
-                                          return 'الرجاء ادخال رمز صحيح , عدم وضع احرف او رموز';
-                                        }
-                                        return null;
+                                      onTap: () {
+                                        _selectDate(context);
+                                        setState(() {
+                                          colorbirth = Colors.black;
+                                        });
                                       },
-                                      onSaved: (value) {},
+                                      autovalidate: autovalidatepasswordrepeat,
+                                      onSaved: (_) {
+                                        setState(() {
+                                          autovalidatepasswordrepeat = true;
+                                        });
+                                      },
+                                      readOnly: true,
+                                      cursorWidth: 0,
+                                      cursorColor: Colors.white,
+                                      cursorHeight: 0,
                                       expands: false,
-                                      maxLength: 6,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\+[1-9]{1}[0-9]{3,14}$'))
-                                      ],
-                                      keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                         counterStyle: TextStyle(
                                           color: Colors.grey.withOpacity(0.7),
@@ -723,8 +662,98 @@ class _SingupState extends State<Singup> {
                                         hintStyle: GoogleFonts.cairo(
                                             fontSize: 15, color: Colors.grey),
                                       ),
-                                      controller: _smsController,
+                                      controller: _birthController,
                                     ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      OTP == true
+                          ? Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 5, right: 25, left: 25, bottom: 5),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "رمز التحقق",
+                                            textAlign: TextAlign.right,
+                                            style: GoogleFonts.cairo(
+                                                fontWeight: FontWeight.w600,
+                                                color: Colora().brown,
+                                                fontSize: 15),
+                                          )),
+                                      Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            side: BorderSide(
+                                                color: Color(0xff663A2B),
+                                                width: 1)),
+                                        child: ListTile(
+                                          trailing: Icon(Icons.lock,
+                                              color: Colors.brown),
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Directionality(
+                                              textDirection: TextDirection.rtl,
+                                              child: TextFormField(
+                                                textAlign: TextAlign.right,
+                                                readOnly: false,
+                                                cursorWidth: 0,
+                                                cursorColor: Colors.white,
+                                                cursorHeight: 0,
+                                                expands: false,
+                                                validator: (value) {
+                                                  if (value.isEmpty) {
+                                                    return 'هاذا الحقل مطلوب';
+                                                  } else if (value.length < 6) {
+                                                    return 'الرجاء ادخال رمز تحقق صحيح';
+                                                  }
+                                                  return null;
+                                                },
+                                                onSaved: (value) {},
+                                                maxLength: 6,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                decoration: InputDecoration(
+                                                  counterStyle: TextStyle(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.7),
+                                                  ),
+                                                  // border: OutlineInputBorder(
+                                                  //     borderRadius: BorderRadius.circular(20),
+                                                  //     borderSide: BorderSide(width: 2),
+                                                  //     gapPadding: 10),
+                                                  //
+                                                  //
+                                                  counterText: "",
+                                                  contentPadding:
+                                                      EdgeInsetsDirectional
+                                                          .only(
+                                                              start: 20,
+                                                              end: 6,
+                                                              bottom: 0,
+                                                              top: 0),
+                                                  border: InputBorder.none,
+                                                  hintStyle: GoogleFonts.cairo(
+                                                      fontSize: 15,
+                                                      color: Colors.grey),
+                                                ),
+                                                controller: _smsController,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 // ignore: deprecated_member_use
@@ -747,101 +776,107 @@ class _SingupState extends State<Singup> {
                               height: 1,
                               width: 1,
                             ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 24.0, bottom: 0, left: 30, right: 30),
-                        child: Container(
-                          width: 250,
-                          height: 40,
-                          child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30)),
-                              color: Colors.green,
-                              child: Text(
-                                makeacount,
-                                style: GoogleFonts.cairo(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 20),
-                              ),
-                              onPressed: () async {
-                                if (_formKdey.currentState.validate()) {
-                                  if (OTP == false) {
-                                    try {
-                                      // ignore: await_only_futures
-                                      await verifyPhoneNumber();
-                                      showInSnackBar('سيتم ارسال رمز تحقق');
-                                      sharedPreferences(context);
-                                      addusertofirebase();
-                                      setState(() {
-                                        controller.animateTo(
-                                          100,
-                                          duration: Duration(),
-                                          curve: Curves.easeOut,
-                                        );
-
-                                        makeacount = "ارسال";
-                                        OTP = true;
-                                      });
-                                      // Navigator.of(context).pushReplacement(
-                                      // MaterialPageRoute(
-                                      // builder: (context) => chose()));
-                                    } catch (error) {
-                                      print(error);
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text(
-                                              "الرجاء ادخال كلمة مرور او بريد صحيح" +
-                                                  error.toString(),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    }
-                                  } else {
-                                    try {
-                                      // ignore: await_only_futures
-                                      await signInWithPhoneNumber();
-                                      sharedPreferences(context);
-                                    } catch (e) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  "Something went wrong $e"),
-                                            );
-                                          });
-                                    }
-                                  }
-                                } else {
-                                  return null;
-                                }
-                              }),
-                        ),
-                      ),
                       SizedBox(
                         height: 20,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 200,
+                          height: 50,
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            color: Color(0xff789C3B),
+                            child: Center(
+                              child: Text(
+                                "انشــاء حساب",
+                                style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              if (_formKdey.currentState.validate()) {
+                                if (OTP == false) {
+                                  try {
+                                    // ignore: await_only_futures
+                                    await verifyPhoneNumber();
+                                    showInSnackBar('سيتم ارسال رمز تحقق');
+                                    sharedPreferences(context);
+                                    addusertofirebase();
+                                    setState(() {
+                                      makeacount = "ارسال";
+                                      OTP = true;
+                                    });
+                                    // Navigator.of(context).pushReplacement(
+                                    // MaterialPageRoute(
+                                    // builder: (context) => chose()));
+                                  } catch (error) {
+                                    print(error);
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            "الرجاء ادخال كلمة مرور او بريد صحيح" +
+                                                error.toString(),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }
+                                } else {
+                                  try {
+                                    // ignore: await_only_futures
+                                    await signInWithPhoneNumber();
+                                    sharedPreferences(context);
+                                  } catch (e) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title:
+                                              Text("Something went wrong $e"),
+                                        );
+                                      },
+                                    );
+                                  }
+                                }
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
                         child: Row(
                           children: [
                             Spacer(),
                             InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LoginScreenPage()));
-                                },
-                                child: Text(" تملك حسابا ؟ سجل دخول        ")),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            LoginScreenPage()));
+                              },
+                              child: Text(
+                                "تملك حسابا ؟ سجل دخول",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            Spacer(),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],
@@ -863,7 +898,7 @@ class _SingupState extends State<Singup> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
 
-    sharedPreferences.setString('phone', _phoneNumberController.text);
+    sharedPreferences.setString('phone', "+962" + _phoneNumberController.text);
     sharedPreferences.setString('password', pass.text.toString());
     sharedPreferences.setString('name', name.text.toString());
 

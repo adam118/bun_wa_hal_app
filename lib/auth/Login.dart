@@ -49,13 +49,6 @@ class _LoginState extends State<Login> {
       setState(() {});
     });
   }
-
-  @override
-  void dispose() {
-    pass.dispose();
-    super.dispose();
-  }
-
   // void signInWithPhoneNumber() async {
   //   try {
   //     // ignore: unused_local_variable
