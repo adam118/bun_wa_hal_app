@@ -11,7 +11,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pixel_border/pixel_border.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -29,7 +28,7 @@ void min() {
 bool getFromPlaces = false;
 final List<FireBaseItem> fbitem = [];
 double currentsliderval = 250;
-double price = 2;
+double price;
 double containHeal = 0.5;
 String getFromPlaced = '';
 String groupval3;
@@ -81,58 +80,6 @@ class _coffee1State extends State<coffee1> {
   Widget build(BuildContext context) {
     final List<UserItem> items = [
       UserItem(
-        title: 'قهوة تركية',
-        image: InkWell(
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => coffee1()));
-          },
-          child: Image.asset(
-            "Images/coffee.png",
-            scale: 0.5,
-          ),
-        ),
-        blond: Radio(
-          activeColor: Colors.brown,
-          hoverColor: Colors.brown,
-          value: "blond",
-          groupValue: groubVal,
-          onChanged: (val) {
-            groubVal = val;
-            setState(() {
-              cookinglevels = "شقراء";
-            });
-          },
-        ),
-        medium: Radio(
-          activeColor: Colors.brown,
-          hoverColor: Colors.brown,
-          value: "meadiam",
-          groupValue: groubVal,
-          onChanged: (val) {
-            groubVal = val;
-            setState(() {
-              cookinglevels = "وسط";
-            });
-          },
-        ),
-        quarter: Radio(
-          activeColor: Colors.brown,
-          hoverColor: Colors.brown,
-          value: '1',
-          groupValue: groubVal2,
-          onChanged: (val) {
-            groubVal2 = val;
-            setState(() {
-              size = 250;
-              if (size == 250) {
-                setState(() {
-                  price = 2;
-                });
-              }
-            });
-          },
-        ),
         half: Radio(
           activeColor: Colors.brown,
           hoverColor: Colors.brown,
@@ -203,8 +150,6 @@ class _coffee1State extends State<coffee1> {
             ),
           ),
         ),
-        containHeal: heal,
-        price: price,
       ),
     ];
     final GlobalKey<ScaffoldState> _scaffoldKey =
@@ -282,7 +227,9 @@ class _coffee1State extends State<coffee1> {
                                   child: CircularProgressIndicator());
                             }
                             cloud.QuerySnapshot querySnapshot = snapshot.data;
-
+                            setState(() {
+                              price = querySnapshot.docs[index]['price'];
+                            });
                             return Hero(
                               tag: logoTage,
                               child: Padding(
@@ -434,7 +381,23 @@ class _coffee1State extends State<coffee1> {
                                           ),
                                         );
                                       }),
-                                  (items[indexs].quarter)
+                                  Radio(
+                                    activeColor: Colors.brown,
+                                    hoverColor: Colors.brown,
+                                    value: '1',
+                                    groupValue: groubVal2,
+                                    onChanged: (val) {
+                                      groubVal2 = val;
+                                      setState(() {
+                                        size = 250;
+                                        if (size == 250) {
+                                          setState(() {
+                                            price = 2;
+                                          });
+                                        }
+                                      });
+                                    },
+                                  ),
                                 ],
                               ),
                             ),
@@ -548,7 +511,18 @@ class _coffee1State extends State<coffee1> {
                                       color: Colors.black,
                                     ),
                                   ),
-                                  (items[indexs].blond)
+                                  Radio(
+                                    activeColor: Colors.brown,
+                                    hoverColor: Colors.brown,
+                                    value: "blond",
+                                    groupValue: groubVal,
+                                    onChanged: (val) {
+                                      groubVal = val;
+                                      setState(() {
+                                        cookinglevels = "شقراء";
+                                      });
+                                    },
+                                  ),
                                 ],
                               ),
                             ),
@@ -563,7 +537,18 @@ class _coffee1State extends State<coffee1> {
                                       color: Colors.black,
                                     ),
                                   ),
-                                  (items[indexs].medium)
+                                  Radio(
+                                    activeColor: Colors.brown,
+                                    hoverColor: Colors.brown,
+                                    value: "meadiam",
+                                    groupValue: groubVal,
+                                    onChanged: (val) {
+                                      groubVal = val;
+                                      setState(() {
+                                        cookinglevels = "وسط";
+                                      });
+                                    },
+                                  ),
                                 ],
                               ),
                             ),
@@ -589,7 +574,7 @@ class _coffee1State extends State<coffee1> {
                           color: Colora().green,
                           child: Center(
                             child: Text(
-                              "درجة التحميص",
+                              "اضافات",
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
@@ -599,6 +584,7 @@ class _coffee1State extends State<coffee1> {
                         ),
                         (items[indexs].dep),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
                               padding:
@@ -608,39 +594,37 @@ class _coffee1State extends State<coffee1> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(15),
                                     child: Container(
-                                      child: Column(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            // ignore: deprecated_member_use
-                                            child: FlatButton(
-                                                color: Colora().green,
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      price.toString(),
-                                                      style: GoogleFonts.cairo(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: Colors.white,
-                                                          fontSize: TextSized()
-                                                              .textLarg),
-                                                    ),
-                                                    Text(
-                                                      "  JD",
-                                                      style: GoogleFonts.cairo(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: Colors.brown,
-                                                          fontSize: 22),
-                                                    ),
-                                                  ],
-                                                ),
-                                                splashColor: Colora().green,
-                                                onPressed: () {}),
-                                          ),
-                                        ],
+                                      height: 50,
+                                      width: 100,
+                                      child: Center(
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              color: Colora().brown,
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    price.toString(),
+                                                    style: GoogleFonts.cairo(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.white,
+                                                        fontSize: TextSized()
+                                                            .textLarg),
+                                                  ),
+                                                  Text(
+                                                    "  JD",
+                                                    style: GoogleFonts.cairo(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.brown,
+                                                        fontSize: 22),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
