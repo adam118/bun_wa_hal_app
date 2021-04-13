@@ -34,8 +34,6 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-final CollectionReference Item = FirebaseFirestore.instance.collection('Items');
-
 final List<String> imgList = [
   'Images/image1.png',
   'Images/image2.png',
@@ -248,207 +246,26 @@ class _MyAppState extends State<MyApp> {
               ],
             ),
             // body:
-            body: StreamBuilder<QuerySnapshot>(
-              stream: query.snapshots(),
-              builder: (context, stream) {
-                if (stream.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (stream.hasError) {
-                  print(stream.error);
-                  return Center(child: Text(stream.error.toString()));
-                }
-
-                QuerySnapshot querySnapshot = stream.data;
-
-                return ListView.builder(
-                  physics: ScrollPhysics(),
-                  itemCount: 1,
-                  itemBuilder: (context, index) => SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        //ImageSlider
-                        Container(
-                          height: 200,
-                          child: PageView(
-                            controller: _pageController,
-                            allowImplicitScrolling: true,
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: new AssetImage("Images/image2.png"),
-                                    fit: BoxFit.scaleDown,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: new AssetImage("Images/image1.png"),
-                                    fit: BoxFit.scaleDown,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: new AssetImage("Images/image3.png"),
-                                    fit: BoxFit.scaleDown,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+            body: ListView.builder(
+              physics: ScrollPhysics(),
+              itemCount: 1,
+              itemBuilder: (context, index) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Slider(),
+                      Padding(
+                        padding: const EdgeInsets.all(28.0),
+                        child: Text(
+                          'منتجاتنا',
+                          style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.bold,
+                              color: Colora().green,
+                              fontSize: TextSized().textTitle + 5),
                         ),
-                        //Title
-                        Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Text(
-                            'منتجاتنا',
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.bold,
-                                color: Colora().green,
-                                fontSize: TextSized().textTitle + 5),
-                          ),
-                        ),
-                        //ItemBuilder
-                        Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: double.infinity,
-                          child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: querySnapshot.size,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {});
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => coffee1()));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          side: BorderSide(
-                                              color: Colora().brown, width: 3)),
-                                      child: Container(
-                                        height: 200,
-                                        width: 125,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              height: 150,
-                                              width: 150,
-                                              child: Image.network(
-                                                querySnapshot.docs[index]
-                                                        ['imgpath'] ??
-                                                    "",
-                                              ),
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                SizedBox(
-                                                  height: 20,
-                                                ),
-                                                Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Text(
-                                                        querySnapshot
-                                                                    .docs[index]
-                                                                ['name'] ??
-                                                            'error',
-                                                        style: GoogleFonts.cairo(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color:
-                                                                Colora().green,
-                                                            fontSize:
-                                                                TextSized()
-                                                                    .textTitle),
-                                                      ),
-                                                      Text(
-                                                        querySnapshot
-                                                                    .docs[index]
-                                                                ['des'] ??
-                                                            'error',
-                                                        style: GoogleFonts.cairo(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color:
-                                                                Colora().grey,
-                                                            fontSize:
-                                                                TextSized()
-                                                                    .textSmall),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 20,
-                                                ),
-                                                Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Text(
-                                                        querySnapshot.docs[
-                                                                        index][
-                                                                    'stander'] +
-                                                                "g    " ??
-                                                            'error',
-                                                        style: GoogleFonts.cairo(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color:
-                                                                Colora().green,
-                                                            fontSize: TextSized()
-                                                                    .textMediam +
-                                                                5),
-                                                      ),
-                                                      Text(
-                                                        querySnapshot
-                                                                    .docs[index]
-                                                                        [
-                                                                        'price']
-                                                                    .toString() +
-                                                                "JD    " ??
-                                                            'error',
-                                                        style: GoogleFonts.cairo(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color:
-                                                                Colora().green,
-                                                            fontSize: TextSized()
-                                                                .textMediam),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      MainItem(),
+                    ],
                   ),
                 );
               },
@@ -456,6 +273,227 @@ class _MyAppState extends State<MyApp> {
           );
         },
       ),
+    );
+  }
+}
+
+class Slider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Query query = FirebaseFirestore.instance.collection('slider');
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: query.snapshots(),
+      builder: (context, stream) {
+        if (stream.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (stream.hasError) {
+          print(stream.error);
+          return Center(child: Text(stream.error.toString()));
+        }
+
+        QuerySnapshot querySnapshot = stream.data;
+        return Container(
+          height: 200,
+          child: ListView.builder(
+            itemCount: 1,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return Container(
+                height: 200,
+                child: PageView(
+                  controller: _pageController,
+                  allowImplicitScrolling: true,
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: new NetworkImage(
+                              querySnapshot.docs[index]['img1']),
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: new NetworkImage(
+                              querySnapshot.docs[index]['img2']),
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: new NetworkImage(
+                              querySnapshot.docs[index]['img3']),
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class MainItem extends StatefulWidget {
+  @override
+  _MainItemState createState() => _MainItemState();
+}
+
+class _MainItemState extends State<MainItem> {
+  @override
+  Widget build(BuildContext context) {
+    Query query = FirebaseFirestore.instance.collection('Items');
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: query.snapshots(),
+      builder: (context, stream) {
+        if (stream.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (stream.hasError) {
+          print(stream.error);
+          return Center(child: Text(stream.error.toString()));
+        }
+
+        QuerySnapshot querySnapshot = stream.data;
+        return Container(
+          height: MediaQuery.of(context).size.height + 1100,
+          child: ListView.builder(
+            physics: ScrollPhysics(),
+            itemCount: 1,
+            itemBuilder: (context, index) {
+              return Container(
+                height: MediaQuery.of(context).size.height + 1100,
+                width: double.infinity,
+                child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: querySnapshot.size,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              price = querySnapshot.docs[index]['price'];
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => coffee1()));
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                side: BorderSide(
+                                    color: Colora().brown, width: 3)),
+                            child: Container(
+                              height: 200,
+                              width: 125,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 150,
+                                    width: 150,
+                                    child: Image.network(
+                                      querySnapshot.docs[index]['imgpath'] ??
+                                          "",
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Container(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              querySnapshot.docs[index]
+                                                      ['name'] ??
+                                                  'error',
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colora().green,
+                                                  fontSize:
+                                                      TextSized().textTitle),
+                                            ),
+                                            Text(
+                                              querySnapshot.docs[index]
+                                                      ['des'] ??
+                                                  'error',
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colora().grey,
+                                                  fontSize:
+                                                      TextSized().textSmall),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Container(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              querySnapshot.docs[index]
+                                                          ['stander'] +
+                                                      "g    " ??
+                                                  'error',
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colora().green,
+                                                  fontSize:
+                                                      TextSized().textMediam +
+                                                          5),
+                                            ),
+                                            Text(
+                                              querySnapshot.docs[index]['price']
+                                                          .toString() +
+                                                      "JD    " ??
+                                                  'error',
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colora().green,
+                                                  fontSize:
+                                                      TextSized().textMediam),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

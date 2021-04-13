@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bun_wa_hal/auth/chose.dart';
 import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/style/styli.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';

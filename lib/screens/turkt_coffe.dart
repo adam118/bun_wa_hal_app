@@ -80,6 +80,11 @@ class _coffee1State extends State<coffee1> {
   Widget build(BuildContext context) {
     final List<UserItem> items = [
       UserItem(
+        image: InkWell(
+          child: Image.network(
+              "https://firebasestorage.googleapis.com/v0/b/bun-wa-hal-app.appspot.com/o/169069594_136042641804149_3404306237808873753_n.png?alt=media&token=6a167d79-3f20-47bf-8ac2-0cee6f702f59"),
+        ),
+        price: 2.0,
         half: Radio(
           activeColor: Colors.brown,
           hoverColor: Colors.brown,
@@ -97,6 +102,7 @@ class _coffee1State extends State<coffee1> {
             });
           },
         ),
+        title: "قهوة سعودية",
         one: Radio(
           activeColor: Colors.brown,
           hoverColor: Colors.brown,
@@ -227,9 +233,7 @@ class _coffee1State extends State<coffee1> {
                                   child: CircularProgressIndicator());
                             }
                             cloud.QuerySnapshot querySnapshot = snapshot.data;
-                            setState(() {
-                              price = querySnapshot.docs[index]['price'];
-                            });
+
                             return Hero(
                               tag: logoTage,
                               child: Padding(
@@ -594,37 +598,30 @@ class _coffee1State extends State<coffee1> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(15),
                                     child: Container(
-                                      height: 50,
+                                      color: Colora().brown,
+                                      height: 60,
                                       width: 100,
-                                      child: Center(
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              color: Colora().brown,
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    price.toString(),
-                                                    style: GoogleFonts.cairo(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors.white,
-                                                        fontSize: TextSized()
-                                                            .textLarg),
-                                                  ),
-                                                  Text(
-                                                    "  JD",
-                                                    style: GoogleFonts.cairo(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors.brown,
-                                                        fontSize: 22),
-                                                  ),
-                                                ],
-                                              ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "   " + price.toString(),
+                                            style: GoogleFonts.cairo(
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                                fontSize: TextSized().textLarg),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: Text(
+                                              "  JD",
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                  fontSize: 12),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -734,46 +731,74 @@ void displayAdd(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        actions: [
-          Container(
-            width: MediaQuery.of(context).size.width / 4,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: FlatButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => check_out()));
-                },
-                color: Colors.brown,
-                child: Text("تاكيد الطلب"),
+        content: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => check_out(),
+                      ),
+                    );
+                  },
+                  color: Colors.brown,
+                  child: Text(
+                    "تاكيد الطلب",
+                    style: GoogleFonts.cairo(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width / 4,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: FlatButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyApp()));
-                },
-                color: Colors.green,
-                child: Text("استمرار"),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyApp()));
+                  },
+                  color: Colors.green,
+                  child: Text(
+                    "استمرار",
+                    style: GoogleFonts.cairo(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
               ),
             ),
+          ],
+        ),
+        elevation: 20,
+        title: Center(
+          child: Text(
+            "تمت اضافة هاذا المنتج بنجاح",
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(fontSize: 15, color: Colors.black),
           ),
-        ],
-        elevation: TextSized().textLarg,
-        title: Text(
-          "تمت اضافة هاذا المنتج بنجاح",
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(fontSize: 15, color: Colors.black),
         ),
       );
     },
   );
 }
+
+String textsize;
 
 // ignore: camel_case_types
 class check_out extends StatefulWidget {
@@ -786,6 +811,29 @@ class _check_outState extends State<check_out> {
   @override
   void initState() {
     super.initState();
+    setState(
+      () {
+        if (size == 1000) {
+          setState(
+            () {
+              textsize = "كيلو";
+            },
+          );
+        } else if (size == 500) {
+          setState(
+            () {
+              textsize = "نص كيلو";
+            },
+          );
+        } else if (size == 250) {
+          setState(
+            () {
+              textsize = "وقية";
+            },
+          );
+        }
+      },
+    );
     Firebase.initializeApp().whenComplete(
       () {
         print("completed");
@@ -896,50 +944,120 @@ class _check_outState extends State<check_out> {
                                     physics: ScrollPhysics(),
                                     itemCount: cart.basketItems.length,
                                     itemBuilder: (context, index) {
-                                      return Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            side: BorderSide(
-                                                color: Colors.brown,
-                                                width: 2.5)),
-                                        child: ListTile(
-                                          contentPadding:
-                                              const EdgeInsets.all(10.0),
-                                          subtitle: Column(
-                                            children: [
-                                              (cart.basketItems[index].dep),
-                                              Text(currentsliderval
-                                                  .toInt()
-                                                  .toString()),
-                                              Text(cookinglevels),
-                                            ],
-                                          ),
-                                          trailing:
-                                              (cart.basketItems[index].image),
-                                          leading: IconButton(
-                                              icon: Icon(Icons.delete),
-                                              onPressed: () {
-                                                cart.remove(
-                                                    cart.basketItems[index]);
-                                              }),
-                                          title: Column(
-                                            children: <Widget>[
-                                              SizedBox(
-                                                width: 5,
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        coffee1()));
+                                          },
+                                          child: Card(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                side: BorderSide(
+                                                    color: Colora().brown,
+                                                    width: 3)),
+                                            child: Container(
+                                              height: 200,
+                                              width: 125,
+                                              child: Row(
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Container(
+                                                        child: Text(
+                                                          (cart
+                                                                  .basketItems[
+                                                                      index]
+                                                                  .title) ??
+                                                              'error',
+                                                          style: GoogleFonts.cairo(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: Colora()
+                                                                  .green,
+                                                              fontSize: TextSized()
+                                                                      .textMediam +
+                                                                  5),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Container(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Text(
+                                                              textsize ??
+                                                                  'error',
+                                                              style: GoogleFonts
+                                                                  .cairo(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colora()
+                                                                    .green,
+                                                                fontSize:
+                                                                    TextSized()
+                                                                        .textMediam,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              cookinglevels ??
+                                                                  'error',
+                                                              style: GoogleFonts
+                                                                  .cairo(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colora()
+                                                                    .green,
+                                                                fontSize:
+                                                                    TextSized()
+                                                                        .textMediam,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              price.toString() +
+                                                                      "JD    " ??
+                                                                  'error',
+                                                              style: GoogleFonts
+                                                                  .cairo(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colora()
+                                                                    .green,
+                                                                fontSize:
+                                                                    TextSized()
+                                                                        .textMediam,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Image.network(
+                                                    "https://firebasestorage.googleapis.com/v0/b/bun-wa-hal-app.appspot.com/o/169069594_136042641804149_3404306237808873753_n.png?alt=media&token=6a167d79-3f20-47bf-8ac2-0cee6f702f59",
+                                                    scale: 4,
+                                                  ),
+                                                ],
                                               ),
-                                              Text(
-                                                cart.basketItems[index].title,
-                                                textAlign: TextAlign.right,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  cart.basketItems[index].price
-                                                      .toString(),
-                                                  textAlign: TextAlign.right),
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       );
@@ -960,11 +1078,13 @@ class _check_outState extends State<check_out> {
                           child: Row(
                             children: [
                               Spacer(),
-                              Text("استلام من الفرع",
-                                  style: GoogleFonts.cairo(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  )),
+                              Text(
+                                "استلام من الفرع",
+                                style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
                               Radio(
                                 groupValue: getFromPlaced,
                                 onChanged: (val) {
@@ -1027,20 +1147,20 @@ class _check_outState extends State<check_out> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
-                                color: Colors.brown,
-                                height: 70,
-                                width: 150,
-                                child: Center(
-                                  child: Container(
-                                    child: Text(
-                                      cart.totalPrice.toString(),
-                                      style: GoogleFonts.cairo(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                          fontSize: TextSized().textLarg),
-                                    ),
+                              color: Colors.brown,
+                              height: 70,
+                              width: 150,
+                              child: Center(
+                                child: Text(
+                                  cart.totalPrice.toString(),
+                                  style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontSize: TextSized().textLarg,
                                   ),
-                                )),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         Spacer(),
@@ -1057,23 +1177,28 @@ class _check_outState extends State<check_out> {
                                 onPressed: () {
                                   if (getFromPlaces == false) {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (contaxt) =>
-                                                checkout_Screen_final()));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (contaxt) =>
+                                            checkout_Screen_final(),
+                                      ),
+                                    );
                                   } else {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (contaxt) =>
-                                                getFromPlace()));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (contaxt) => getFromPlace(),
+                                      ),
+                                    );
                                   }
                                 },
-                                child: Text("متابعة",
-                                    style: GoogleFonts.cairo(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                        fontSize: 20)),
+                                child: Text(
+                                  "متابعة",
+                                  style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontSize: 20),
+                                ),
                               ),
                             ),
                           ),
