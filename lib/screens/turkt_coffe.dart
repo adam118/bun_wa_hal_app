@@ -25,6 +25,7 @@ void min() {
   ));
 }
 
+int qun = 1;
 bool getFromPlaces = false;
 final List<FireBaseItem> fbitem = [];
 double currentsliderval = 250;
@@ -418,7 +419,10 @@ class _coffee1State extends State<coffee1> {
                                   if (snapshot.hasError) {
                                     print(snapshot.error);
                                     return Center(
-                                        child: Text(snapshot.error.toString()));
+                                      child: Text(
+                                        snapshot.error.toString(),
+                                      ),
+                                    );
                                   }
                                   if (snapshot.connectionState ==
                                       ConnectionState.done) {
@@ -930,7 +934,7 @@ class _check_outState extends State<check_out> {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Container(
-                        height: 350,
+                        height: 300,
                         child: ListView.builder(
                           itemCount: 1,
                           itemBuilder: (context, index) {
@@ -962,10 +966,102 @@ class _check_outState extends State<check_out> {
                                                     color: Colora().brown,
                                                     width: 3)),
                                             child: Container(
-                                              height: 200,
+                                              height: 222,
                                               width: 125,
                                               child: Row(
                                                 children: [
+                                                  Container(
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        Container(
+                                                          height: 140,
+                                                          child: Image.network(
+                                                            "https://firebasestorage.googleapis.com/v0/b/bun-wa-hal-app.appspot.com/o/169069594_136042641804149_3404306237808873753_n.png?alt=media&token=6a167d79-3f20-47bf-8ac2-0cee6f702f59",
+                                                            scale: 5,
+                                                          ),
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                child:
+                                                                    Container(
+                                                                  color: Colors
+                                                                      .green,
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .remove,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    onTap: () {
+                                                                      setState(
+                                                                        () {
+                                                                          qun--;
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              qun.toString(),
+                                                              style: GoogleFonts
+                                                                  .cairo(
+                                                                      fontSize:
+                                                                          20,
+                                                                      color: Colora()
+                                                                          .green),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                child:
+                                                                    Container(
+                                                                  color: Colors
+                                                                      .green,
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    child: Icon(
+                                                                      Icons.add,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    onTap: () {
+                                                                      setState(
+                                                                        () {
+                                                                          qun++;
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                   Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.end,
@@ -973,23 +1069,18 @@ class _check_outState extends State<check_out> {
                                                       SizedBox(
                                                         height: 20,
                                                       ),
-                                                      Container(
-                                                        child: Text(
-                                                          (cart
-                                                                  .basketItems[
-                                                                      index]
-                                                                  .title) ??
-                                                              'error',
-                                                          style: GoogleFonts.cairo(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color: Colora()
-                                                                  .green,
-                                                              fontSize: TextSized()
-                                                                      .textMediam +
-                                                                  5),
-                                                        ),
+                                                      Text(
+                                                        (cart.basketItems[index]
+                                                                .title) ??
+                                                            'error',
+                                                        style: GoogleFonts.cairo(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                Colora().green,
+                                                            fontSize: TextSized()
+                                                                    .textMediam +
+                                                                5),
                                                       ),
                                                       SizedBox(
                                                         height: 20,
@@ -1001,7 +1092,8 @@ class _check_outState extends State<check_out> {
                                                                   .end,
                                                           children: [
                                                             Text(
-                                                              textsize ??
+                                                              textsize +
+                                                                      " - " ??
                                                                   'error',
                                                               style: GoogleFonts
                                                                   .cairo(
@@ -1016,7 +1108,8 @@ class _check_outState extends State<check_out> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              cookinglevels ??
+                                                              cookinglevels +
+                                                                      " - " ??
                                                                   'error',
                                                               style: GoogleFonts
                                                                   .cairo(
@@ -1032,7 +1125,8 @@ class _check_outState extends State<check_out> {
                                                             ),
                                                             Text(
                                                               price.toString() +
-                                                                      "JD    " ??
+                                                                      " JD" +
+                                                                      " - " ??
                                                                   'error',
                                                               style: GoogleFonts
                                                                   .cairo(
@@ -1046,14 +1140,13 @@ class _check_outState extends State<check_out> {
                                                                         .textMediam,
                                                               ),
                                                             ),
+                                                            SizedBox(
+                                                              height: 20,
+                                                            ),
                                                           ],
                                                         ),
                                                       ),
                                                     ],
-                                                  ),
-                                                  Image.network(
-                                                    "https://firebasestorage.googleapis.com/v0/b/bun-wa-hal-app.appspot.com/o/169069594_136042641804149_3404306237808873753_n.png?alt=media&token=6a167d79-3f20-47bf-8ac2-0cee6f702f59",
-                                                    scale: 4,
                                                   ),
                                                 ],
                                               ),
@@ -1067,6 +1160,18 @@ class _check_outState extends State<check_out> {
                               ),
                             );
                           },
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        " اجمالي المكونات بالسلة" +
+                            "  " +
+                            cart.count.toString(),
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.w600,
+                          color: Colora().black,
+                          fontSize: TextSized().textMediam,
                         ),
                       ),
                     ),
@@ -1086,6 +1191,7 @@ class _check_outState extends State<check_out> {
                                 ),
                               ),
                               Radio(
+                                activeColor: Colora().brown,
                                 groupValue: getFromPlaced,
                                 onChanged: (val) {
                                   getFromPlaced = val;
@@ -1117,6 +1223,7 @@ class _check_outState extends State<check_out> {
                                   ),
                                 ),
                                 Radio(
+                                  activeColor: Colora().brown,
                                   groupValue: getFromPlaced,
                                   onChanged: (val) {
                                     getFromPlaced = val;
@@ -1148,11 +1255,11 @@ class _check_outState extends State<check_out> {
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
                               color: Colors.brown,
-                              height: 70,
-                              width: 150,
+                              height: 60,
+                              width: 140,
                               child: Center(
                                 child: Text(
-                                  cart.totalPrice.toString(),
+                                  cart.totalPrice.toString() + " JD",
                                   style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -1167,8 +1274,8 @@ class _check_outState extends State<check_out> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10.0),
                           child: Container(
-                            height: 70,
-                            width: 150,
+                            height: 60,
+                            width: 140,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               // ignore: deprecated_member_use

@@ -40,8 +40,6 @@ DatabaseReference userinfo;
 //key
 final _formKdey = GlobalKey<FormState>();
 
-//Time
-DateTime currentDate = DateTime.now();
 // ignore: non_constant_identifier_names
 bool OTP = false;
 //TextEditing controllers
@@ -73,7 +71,7 @@ class _SingupState extends State<Singup> {
     super.initState();
     _auth.setLanguageCode("en-ch");
     setState(() {
-      pickedDate = DateTime(2000, 1, 1);
+      pickedDate = DateTime(2000, 12, 30);
     });
     Firebase.initializeApp().whenComplete(() {
       print("completed");
@@ -628,12 +626,6 @@ class _SingupState extends State<Singup> {
                                         _selectDate(context);
                                         setState(() {
                                           colorbirth = Colors.black;
-                                        });
-                                      },
-                                      autovalidate: autovalidatepasswordrepeat,
-                                      onSaved: (_) {
-                                        setState(() {
-                                          autovalidatepasswordrepeat = true;
                                         });
                                       },
                                       readOnly: true,

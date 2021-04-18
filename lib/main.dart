@@ -6,6 +6,7 @@ import 'package:bun_wa_hal/auth/chose.dart';
 import 'package:bun_wa_hal/auth/myAcount.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/model/item.dart';
+import 'package:bun_wa_hal/order/getfrompalce.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,7 +23,7 @@ Future<void> main() async {
     create: (context) => Cart(),
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Splash(),
+      home: getFromPlace(),
     ),
   ));
 }
@@ -370,13 +371,13 @@ class _MainItemState extends State<MainItem> {
 
         QuerySnapshot querySnapshot = stream.data;
         return Container(
-          height: MediaQuery.of(context).size.height + 1100,
+          height: MediaQuery.of(context).size.height + 400,
           child: ListView.builder(
             physics: ScrollPhysics(),
             itemCount: 1,
             itemBuilder: (context, index) {
               return Container(
-                height: MediaQuery.of(context).size.height + 1100,
+                height: MediaQuery.of(context).size.height + 400,
                 width: double.infinity,
                 child: ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
