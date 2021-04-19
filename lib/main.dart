@@ -6,7 +6,6 @@ import 'package:bun_wa_hal/auth/chose.dart';
 import 'package:bun_wa_hal/auth/myAcount.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/model/item.dart';
-import 'package:bun_wa_hal/order/getfrompalce.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,7 +22,7 @@ Future<void> main() async {
     create: (context) => Cart(),
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: getFromPlace(),
+      home: Splash(),
     ),
   ));
 }

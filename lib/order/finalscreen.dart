@@ -3,10 +3,12 @@ import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/map/map.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
+import 'package:bun_wa_hal/style/styli.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart' as database;
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -18,29 +20,73 @@ class checkout_Screen_final extends StatefulWidget {
 
 int i = 1;
 database.DatabaseReference _counterRef;
+DateTime pickedDate;
+
+TextEditingController pass = TextEditingController();
+String groupVal2 = "";
+DateTime currentDate = DateTime.now();
 
 FirebaseFirestore firestore =
     FirebaseFirestore.instance.collection('order').firestore;
 String token;
-DateTime currentDate = DateTime.now();
 
 // ignore: camel_case_types
 class _checkout_Screen_finalState extends State<checkout_Screen_final> {
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: currentDate,
-        lastDate: new DateTime.now().add(new Duration(days: currentDate.day)),
-        firstDate: DateTime(1900));
-    if (pickedDate != null && pickedDate != currentDate)
-      setState(() {
-        currentDate = pickedDate;
-      });
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      pickedDate = DateTime(2021, 12, 30);
+    });
+    Firebase.initializeApp().whenComplete(
+      () {
+        print("completed");
+      },
+    );
   }
 
+  TextEditingController _birthController = TextEditingController(
+    text: pickedDate.year.toString() +
+        "   /   " +
+        pickedDate.month.toString() +
+        "   /   " +
+        pickedDate.day.toString(),
+  );
+  TextEditingController _notsController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    database.DatabaseReference _counterRef;
+    Color colorbirth = Colors.grey;
+
+    Future<void> _selectDate(BuildContext context) async {
+      DatePicker.showDatePicker(context,
+          showTitleActions: true,
+          minTime: DateTime.now(),
+          maxTime: DateTime(
+              currentDate.year, currentDate.month, currentDate.day + 10),
+          theme: DatePickerTheme(
+              headerColor: Colora().green,
+              backgroundColor: Colora().green,
+              itemStyle: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+              doneStyle: TextStyle(color: Colors.white, fontSize: 16)),
+          onChanged: (date) {
+        if (date != null) {
+          setState(() {
+            colorbirth = Colors.black;
+            pickedDate = date;
+          });
+        }
+      }, onConfirm: (date) {
+        if (date != null) {
+          setState(() {
+            pickedDate = date;
+          });
+        }
+      }, currentTime: DateTime.now(), locale: LocaleType.en);
+    }
+
     Query query = FirebaseFirestore.instance.collection('users');
     var querydatabase =
         database.FirebaseDatabase.instance.reference().child('orders').push();
@@ -141,52 +187,67 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: Colors.brown, width: 2)),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                onTap: () {
-                                  _selectDate(context);
-                                },
-                                title: Text(
-                                  currentDate.year.toString() +
-                                      "/" +
-                                      currentDate.month.toString() +
-                                      "/" +
-                                      currentDate.day.toString(),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 18.0, bottom: 18.0, left: 10),
-                                    child: Container(
-                                      width: 300,
-                                      child: TextFormField(
-                                        textAlign: TextAlign.right,
-                                        decoration: InputDecoration(
-                                            labelStyle: GoogleFonts.cairo(
-                                                fontSize: 20,
-                                                color: Colors.brown),
-                                            hintStyle: GoogleFonts.cairo(
-                                                fontSize: 20,
-                                                color: Colors.brown),
-                                            hintText: " رجاءا لا تقرع الجرس"),
-                                        controller: TextEditingController(),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                    SizedBox(
+                      height: 20,
+                    ),
+                    ListTile(
+                      title: TextFormField(
+                        textAlign: TextAlign.right,
+                        onTap: () {
+                          _selectDate(context);
+                          setState(() {
+                            colorbirth = Colors.black;
+                          });
+                        },
+                        readOnly: true,
+                        textInputAction: TextInputAction.done,
+                        cursorWidth: 0,
+                        cursorColor: Colors.white,
+                        cursorHeight: 0,
+                        decoration: InputDecoration(
+                          counterStyle: TextStyle(
+                            color: Colors.grey.withOpacity(0.7),
                           ),
+                        ),
+                        controller: _birthController,
+                      ),
+                      trailing: Text(
+                        ":   تاريخ الاستلام",
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          color: Colora().black,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    ListTile(
+                      title: TextFormField(
+                        textAlign: TextAlign.right,
+                        onTap: () {
+                          _selectDate(context);
+                          setState(() {});
+                        },
+                        readOnly: true,
+                        textInputAction: TextInputAction.done,
+                        cursorWidth: 0,
+                        cursorColor: Colors.white,
+                        cursorHeight: 0,
+                        decoration: InputDecoration(
+                          counterStyle: TextStyle(
+                            color: Colors.grey.withOpacity(0.7),
+                          ),
+                        ),
+                        controller: _notsController,
+                      ),
+                      trailing: Text(
+                        ":   ملاحظات اضافية",
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          color: Colora().black,
                         ),
                       ),
                     ),
@@ -197,7 +258,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                         child: Container(
                           height: 70,
                           width: 150,
-                          color: Colors.green,
+                          color: Colora().green,
                           child: Center(
                             // ignore: deprecated_member_use
                             child: FlatButton(

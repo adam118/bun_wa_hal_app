@@ -1,111 +1,342 @@
+import 'package:bun_wa_hal/Splash/Splash.dart';
+import 'package:bun_wa_hal/main.dart';
+import 'package:bun_wa_hal/model/cart.dart';
+import 'package:bun_wa_hal/order/finalscreen.dart';
+import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
+// ignore: camel_case_types
 class getFromPlace extends StatefulWidget {
   @override
   _getFromPlaceState createState() => _getFromPlaceState();
 }
 
-String selected;
-String val = '';
-String groubVal2 = '';
+DateTime pickedDate;
+DatabaseReference _counterRef;
 
+TextEditingController pass = TextEditingController();
+String groupVal2 = "";
+DateTime currentDate = DateTime.now();
+
+// ignore: camel_case_types
 class _getFromPlaceState extends State<getFromPlace> {
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      pickedDate = DateTime(2021, 12, 30);
+    });
+    Firebase.initializeApp().whenComplete(
+      () {
+        print("completed");
+      },
+    );
+  }
+
+  TextEditingController _birthController = TextEditingController(
+    text: pickedDate.year.toString() +
+        "   /   " +
+        pickedDate.month.toString() +
+        "   /   " +
+        pickedDate.day.toString(),
+  );
+  TextEditingController _notsController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          color: Colora().brown,
-        ),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.brown),
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'Images/logo.png',
-            scale: 10,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        child: ListView(
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "الرجاء الاختيار من احد الافرع التالية",
-                  style: GoogleFonts.cairo(
-                    fontSize: 20,
-                    color: Colora().black,
-                  ),
-                ),
+    Color colorbirth = Colors.grey;
+
+    Future<void> _selectDate(BuildContext context) async {
+      DatePicker.showDatePicker(context,
+          showTitleActions: true,
+          minTime: DateTime.now(),
+          maxTime: DateTime(
+              currentDate.year, currentDate.month, currentDate.day + 10),
+          theme: DatePickerTheme(
+              headerColor: Colora().green,
+              backgroundColor: Colora().green,
+              itemStyle: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+              doneStyle: TextStyle(color: Colors.white, fontSize: 16)),
+          onChanged: (date) {
+        if (date != null) {
+          setState(() {
+            colorbirth = Colors.black;
+            pickedDate = date;
+          });
+        }
+      }, onConfirm: (date) {
+        if (date != null) {
+          setState(() {
+            pickedDate = date;
+          });
+        }
+      }, currentTime: DateTime.now(), locale: LocaleType.en);
+    }
+
+    return Consumer<Cart>(
+      builder: (context, cart, child) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: BackButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              color: Colora().brown,
+            ),
+            backgroundColor: Colors.white,
+            iconTheme: IconThemeData(color: Colors.brown),
+            elevation: 0,
+            title: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'Images/logo.png',
+                scale: 10,
               ),
             ),
-            SizedBox(
-              height: 25,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 300,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: Colora().brown,
-                      width: 2,
+            centerTitle: true,
+          ),
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: double.infinity,
+            child: ListView.builder(
+              itemCount: 1,
+              itemBuilder: (context, index) => Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Container(
+                      height: 250,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: Colora().brown,
+                            width: 2,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "إستلام من فرع",
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 20,
+                                    color: Colora().black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              trailing: Radio(
+                                activeColor: Colors.brown,
+                                value: '1',
+                                groupValue: groupVal2,
+                                onChanged: (val) {
+                                  groupVal2 = val;
+                                  setState(() {});
+                                },
+                              ),
+                              title: Text(
+                                "الهاشمي الشمالي",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15,
+                                  color: Colora().black,
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              trailing: Radio(
+                                activeColor: Colors.brown,
+                                value: '2',
+                                groupValue: groupVal2,
+                                onChanged: (val) {
+                                  groupVal2 = val;
+                                  setState(() {});
+                                },
+                              ),
+                              title: Text(
+                                "بيادر وادي السير",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15,
+                                  color: Colora().black,
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              trailing: Radio(
+                                activeColor: Colors.brown,
+                                value: '3',
+                                groupValue: groupVal2,
+                                onChanged: (val) {
+                                  groupVal2 = val;
+                                  setState(() {});
+                                },
+                              ),
+                              title: Text(
+                                "ش.اليرموك",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15,
+                                  color: Colora().black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      RadioListTile(
-                        activeColor: Colors.brown,
-                        title: Text("فرع بيادر وادي السير"),
-                        value: '1',
-                        groupValue: groubVal2,
-                        onChanged: (val) {
-                          groubVal2 = val;
-                          setState(() {});
-                        },
-                      ),
-                      RadioListTile(
-                        activeColor: Colors.brown,
-                        title: Text("فرع شارع اليرموك"),
-                        value: '2',
-                        groupValue: groubVal2,
-                        onChanged: (val) {
-                          groubVal2 = val;
-                          setState(() {});
-                        },
-                      ),
-                      RadioListTile(
-                        activeColor: Colors.brown,
-                        title: Text("فرع الهاشمي الشمالي"),
-                        value: '3',
-                        groupValue: groubVal2,
-                        onChanged: (val) {
-                          groubVal2 = val;
-                          setState(() {});
-                        },
-                      ),
-                    ],
+                  SizedBox(
+                    height: 20,
                   ),
-                ),
+                  ListTile(
+                    title: TextFormField(
+                      textAlign: TextAlign.right,
+                      onTap: () {
+                        _selectDate(context);
+                        setState(() {
+                          colorbirth = Colors.black;
+                        });
+                      },
+                      readOnly: true,
+                      textInputAction: TextInputAction.done,
+                      cursorWidth: 0,
+                      cursorColor: Colors.white,
+                      cursorHeight: 0,
+                      decoration: InputDecoration(
+                        counterStyle: TextStyle(
+                          color: Colors.grey.withOpacity(0.7),
+                        ),
+                      ),
+                      controller: _birthController,
+                    ),
+                    trailing: Text(
+                      ":   تاريخ الاستلام",
+                      textAlign: TextAlign.right,
+                      style: GoogleFonts.cairo(
+                        fontSize: 20,
+                        color: Colora().black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                    title: TextFormField(
+                      textAlign: TextAlign.right,
+                      onTap: () {
+                        _selectDate(context);
+                        setState(() {
+                          colorbirth = Colors.black;
+                        });
+                      },
+                      readOnly: true,
+                      textInputAction: TextInputAction.done,
+                      cursorWidth: 0,
+                      cursorColor: Colors.white,
+                      cursorHeight: 0,
+                      decoration: InputDecoration(
+                        counterStyle: TextStyle(
+                          color: Colors.grey.withOpacity(0.7),
+                        ),
+                      ),
+                      controller: _notsController,
+                    ),
+                    trailing: Text(
+                      ":   ملاحظات اضافية",
+                      textAlign: TextAlign.right,
+                      style: GoogleFonts.cairo(
+                        fontSize: 20,
+                        color: Colora().black,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        height: 50,
+                        width: 170,
+                        color: Colora().green,
+                        child: Center(
+                          // ignore: deprecated_member_use
+                          child: FlatButton(
+                            child: Center(
+                              child: Text(
+                                "ارسال الطلب",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontSize: 20),
+                              ),
+                            ),
+                            onPressed: () async {
+                              send(context, index);
+                              setState(
+                                () {
+                                  cart.basketItems.length = 0;
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MyApp(),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  void send(
+    BuildContext context,
+    index,
+  ) async {
+    Map<String, String> map = {
+      'get method': 'get from shop',
+      'nots': _notsController.text.toString(),
+      'date time': _birthController.text.toString(),
+      'id': fbitem[index].itemId,
+      'title': fbitem[index].title,
+      'price': fbitem[index].price.toString(),
+      'cookingLevel': fbitem[index].cookingLevel,
+      'status': 'shipped',
+      'containHeal': fbitem[index].containHeal.toString(),
+      'size': size.toString(),
+    };
+    Map<String, String> info = {
+      'id': token,
+      'location': 'kju84ujv84',
+      'phone': phone.toString(),
+      'رقم العمارة': '2',
+    };
+    _counterRef = FirebaseDatabase.instance.reference().child('Orders');
+    _counterRef.push().set(<String, Map<String, String>>{"i": map});
   }
 }
 
