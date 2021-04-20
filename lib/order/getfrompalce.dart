@@ -39,18 +39,17 @@ class _getFromPlaceState extends State<getFromPlace> {
     );
   }
 
-  TextEditingController _birthController = TextEditingController(
-    text: pickedDate.year.toString() +
-        "   /   " +
-        pickedDate.month.toString() +
-        "   /   " +
-        pickedDate.day.toString(),
-  );
-  TextEditingController _notsController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Color colorbirth = Colors.grey;
-
+    TextEditingController _birthController = TextEditingController(
+      text: pickedDate.year.toString() +
+          "   /   " +
+          pickedDate.month.toString() +
+          "   /   " +
+          pickedDate.day.toString(),
+    );
+    TextEditingController _notsController = TextEditingController();
     Future<void> _selectDate(BuildContext context) async {
       DatePicker.showDatePicker(context,
           showTitleActions: true,
@@ -286,7 +285,32 @@ class _getFromPlaceState extends State<getFromPlace> {
                               ),
                             ),
                             onPressed: () async {
-                              send(context, index);
+                              Map<String, String> map = {
+                                'get method': 'get from shop',
+                                'nots': _notsController.text.toString(),
+                                'date time': _birthController.text.toString(),
+                                'id': fbitem[index].itemId,
+                                'title': fbitem[index].title,
+                                'price': fbitem[index].price.toString(),
+                                'cookingLevel': fbitem[index].cookingLevel,
+                                'status': 'shipped',
+                                'containHeal':
+                                    fbitem[index].containHeal.toString(),
+                                'size': size.toString(),
+                              };
+                              Map<String, String> info = {
+                                'id': token,
+                                'location': 'kju84ujv84',
+                                'phone': phone.toString(),
+                                'رقم العمارة': '2',
+                              };
+                              _counterRef = FirebaseDatabase.instance
+                                  .reference()
+                                  .child('Orders');
+                              _counterRef
+                                  .push()
+                                  .set(<String, Map<String, String>>{"i": map});
+
                               setState(
                                 () {
                                   cart.basketItems.length = 0;
@@ -311,32 +335,6 @@ class _getFromPlaceState extends State<getFromPlace> {
         );
       },
     );
-  }
-
-  void send(
-    BuildContext context,
-    index,
-  ) async {
-    Map<String, String> map = {
-      'get method': 'get from shop',
-      'nots': _notsController.text.toString(),
-      'date time': _birthController.text.toString(),
-      'id': fbitem[index].itemId,
-      'title': fbitem[index].title,
-      'price': fbitem[index].price.toString(),
-      'cookingLevel': fbitem[index].cookingLevel,
-      'status': 'shipped',
-      'containHeal': fbitem[index].containHeal.toString(),
-      'size': size.toString(),
-    };
-    Map<String, String> info = {
-      'id': token,
-      'location': 'kju84ujv84',
-      'phone': phone.toString(),
-      'رقم العمارة': '2',
-    };
-    _counterRef = FirebaseDatabase.instance.reference().child('Orders');
-    _counterRef.push().set(<String, Map<String, String>>{"i": map});
   }
 }
 

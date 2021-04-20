@@ -45,18 +45,18 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
     );
   }
 
-  TextEditingController _birthController = TextEditingController(
-    text: pickedDate.year.toString() +
-        "   /   " +
-        pickedDate.month.toString() +
-        "   /   " +
-        pickedDate.day.toString(),
-  );
-  TextEditingController _notsController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Color colorbirth = Colors.grey;
 
+    TextEditingController _birthController = TextEditingController(
+      text: pickedDate.year.toString() +
+          "   /   " +
+          pickedDate.month.toString() +
+          "   /   " +
+          pickedDate.day.toString(),
+    );
+    TextEditingController _notsController = TextEditingController();
     Future<void> _selectDate(BuildContext context) async {
       DatePicker.showDatePicker(context,
           showTitleActions: true,
@@ -135,12 +135,15 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                           child: Column(
                             children: [
                               Center(
-                                child: Text(
-                                  "عنوان التوصيل",
-                                  style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                      fontSize: 20),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "تفاصيل التوصيل",
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                        fontSize: 20),
+                                  ),
                                 ),
                               ),
                               Row(
@@ -148,7 +151,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Container(
-                                      width: 140,
+                                      width: 200,
                                       child: TextFormField(
                                         textAlign: TextAlign.right,
                                         controller: TextEditingController(),
@@ -156,7 +159,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                     ),
                                   ),
                                   Text(
-                                    ": اختر موقع التوصيل يديوي",
+                                    ": موقع التوصيل",
                                     style: GoogleFonts.cairo(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black,
