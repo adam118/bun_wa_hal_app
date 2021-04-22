@@ -159,6 +159,7 @@ class _coffee1State extends State<coffee1> {
         ),
       ),
     ];
+
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
 
@@ -852,6 +853,7 @@ class _check_outState extends State<check_out> {
   Widget build(BuildContext context) {
     return Consumer<Cart>(
       builder: (context, cart, child) {
+        double total = cart.totalPrice;
         return Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(

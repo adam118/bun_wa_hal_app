@@ -1,5 +1,6 @@
 import 'package:bun_wa_hal/auth/Singup.dart';
 import 'package:bun_wa_hal/main.dart';
+import 'package:bun_wa_hal/map/addlocationfrommap.dart';
 import 'package:bun_wa_hal/map/map.dart';
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
@@ -25,7 +26,8 @@ DateTime pickedDate;
 TextEditingController pass = TextEditingController();
 String groupVal2 = "";
 DateTime currentDate = DateTime.now();
-
+List<String> _locations = ['البيت', 'الشغل', 'القهوة', 'بيت الاهل']; // Option 2
+String _selectedLocation; // Option 2
 FirebaseFirestore firestore =
     FirebaseFirestore.instance.collection('order').firestore;
 String token;
@@ -36,7 +38,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
   void initState() {
     super.initState();
     setState(() {
-      pickedDate = DateTime(2021, 12, 30);
+      pickedDate = DateTime.now();
     });
     Firebase.initializeApp().whenComplete(
       () {
@@ -48,15 +50,19 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
   @override
   Widget build(BuildContext context) {
     Color colorbirth = Colors.grey;
+    String location;
+    TextEditingController _buildingnumberController;
+    TextEditingController _floornumberController;
+    TextEditingController _apartmentnumberController;
 
-    TextEditingController _birthController = TextEditingController(
+    TextEditingController _notsController = TextEditingController();
+    TextEditingController _sendController = TextEditingController(
       text: pickedDate.year.toString() +
           "   /   " +
           pickedDate.month.toString() +
           "   /   " +
           pickedDate.day.toString(),
     );
-    TextEditingController _notsController = TextEditingController();
     Future<void> _selectDate(BuildContext context) async {
       DatePicker.showDatePicker(context,
           showTitleActions: true,
@@ -148,14 +154,38 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                               ),
                               Row(
                                 children: [
+                                  SizedBox(
+                                    width: 35,
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.add),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => addlocationfrommap(),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Container(
-                                      width: 200,
-                                      child: TextFormField(
-                                        textAlign: TextAlign.right,
-                                        controller: TextEditingController(),
-                                      ),
+                                    child: DropdownButton(
+                                      hint: Text('انقر هنا للتحديد'),
+                                      // Not necessary for Option 1
+                                      value: _selectedLocation,
+
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          _selectedLocation = newValue;
+                                        });
+                                      },
+                                      items: _locations.map((location) {
+                                        return DropdownMenuItem(
+                                          child: new Text(location),
+                                          value: location,
+                                        );
+                                      }).toList(),
                                     ),
                                   ),
                                   Text(
@@ -164,26 +194,43 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black,
                                         fontSize: 15),
-                                  )
+                                  ),
                                 ],
                               ),
-                              Text(
-                                "او اختر من الخريطة",
-                                style: GoogleFonts.cairo(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                    fontSize: 15),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 200,
+                                  ),
+                                  Text(
+                                    " : او اختر من الخريطة",
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                        fontSize: 15),
+                                  ),
+                                ],
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(18.0),
-                                child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => map()));
-                                    },
-                                    child: Image.asset("Images/map.png")),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(20),
+                                      bottomRight: Radius.circular(20),
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20)),
+                                  child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => map()));
+                                      },
+                                      child: Image.asset(
+                                        "Images/map.png",
+                                      )),
+                                ),
                               )
                             ],
                           ),
@@ -212,10 +259,10 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                             color: Colors.grey.withOpacity(0.7),
                           ),
                         ),
-                        controller: _birthController,
+                        controller: _sendController,
                       ),
                       trailing: Text(
-                        ":   تاريخ الاستلام",
+                        ":   تاريخ التوصيل",
                         textAlign: TextAlign.right,
                         style: GoogleFonts.cairo(
                           fontSize: 20,
@@ -229,16 +276,13 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                     ListTile(
                       title: TextFormField(
                         textAlign: TextAlign.right,
-                        onTap: () {
-                          _selectDate(context);
-                          setState(() {});
-                        },
-                        readOnly: true,
                         textInputAction: TextInputAction.done,
                         cursorWidth: 0,
                         cursorColor: Colors.white,
                         cursorHeight: 0,
                         decoration: InputDecoration(
+                          hintText: 'عدم التعبئة تعني لايوجد ملاظات',
+                          hintStyle: TextStyle(fontSize: 13),
                           counterStyle: TextStyle(
                             color: Colors.grey.withOpacity(0.7),
                           ),
@@ -247,6 +291,79 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                       ),
                       trailing: Text(
                         ":   ملاحظات اضافية",
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          color: Colora().black,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      title: TextFormField(
+                        textAlign: TextAlign.right,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.number,
+                        cursorWidth: 0,
+                        cursorColor: Colors.white,
+                        cursorHeight: 0,
+                        decoration: InputDecoration(
+                          counterStyle: TextStyle(
+                            color: Colors.grey.withOpacity(0.7),
+                          ),
+                        ),
+                        controller: _buildingnumberController,
+                      ),
+                      trailing: Text(
+                        ":   رقم العمارة",
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          color: Colora().black,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      title: TextFormField(
+                        textAlign: TextAlign.right,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.number,
+                        cursorWidth: 0,
+                        cursorColor: Colors.white,
+                        cursorHeight: 0,
+                        decoration: InputDecoration(
+                          counterStyle: TextStyle(
+                            color: Colors.grey.withOpacity(0.7),
+                          ),
+                        ),
+                        controller: _floornumberController,
+                      ),
+                      trailing: Text(
+                        ":   رقم الطابق ",
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          color: Colora().black,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      title: TextFormField(
+                        textAlign: TextAlign.right,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.number,
+                        cursorWidth: 0,
+                        cursorColor: Colors.white,
+                        cursorHeight: 0,
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(fontSize: 13),
+                          counterStyle: TextStyle(
+                            color: Colors.grey.withOpacity(0.7),
+                          ),
+                        ),
+                        controller: _apartmentnumberController,
+                      ),
+                      trailing: Text(
+                        ":   رقم الشقة",
                         textAlign: TextAlign.right,
                         style: GoogleFonts.cairo(
                           fontSize: 20,
@@ -325,14 +442,14 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
     );
   }
 
-  //void addpoints(QuerySnapshot querySnapshot, Cart cart) {
-  //  setState(
-  //    () {
-  //      userPoints =
-  //          userPoints + querySnapshot.docs[cart.basketItems.length]['points'];
-  //    },
-  //  );
-  //}
+//void addpoints(QuerySnapshot querySnapshot, Cart cart) {
+//  setState(
+//    () {
+//      userPoints =
+//          userPoints + querySnapshot.docs[cart.basketItems.length]['points'];
+//    },
+//  );
+//}
 }
 
 void send(

@@ -6,9 +6,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 // ignore: camel_case_types
-class map extends StatefulWidget {
+class addlocationfrommap extends StatefulWidget {
   @override
-  _mapState createState() => _mapState();
+  _addlocationfrommapState createState() => _addlocationfrommapState();
 }
 
 Position position;
@@ -16,7 +16,7 @@ String pos;
 GoogleMapController mapController;
 
 // ignore: camel_case_types
-class _mapState extends State<map> {
+class _addlocationfrommapState extends State<addlocationfrommap> {
   LatLng _initialcameraposition = LatLng(31.9539, 35.9106);
   GoogleMapController _controller;
   Location _location = Location();
@@ -48,7 +48,7 @@ class _mapState extends State<map> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton(
           child: Icon(
-            Icons.check,
+            Icons.add,
             color: Colors.white,
           ),
           backgroundColor: Colora().green,
