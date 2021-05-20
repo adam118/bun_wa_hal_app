@@ -28,7 +28,7 @@ class Singup extends StatefulWidget {
   _SingupState createState() => _SingupState();
 }
 
-String makeacount = "إنشاء حساب";
+String makeacount = "إنشـاء حساب";
 
 //var
 bool showhide = true;
@@ -84,7 +84,7 @@ class _SingupState extends State<Singup> {
 
   void addusertofirebase() {
     var firebaseUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore.instance.collection("users").doc().set({
+    FirebaseFirestore.instance.collection("users").add({
       "name": name.text.toString(),
       "phone": _phoneNumberController.text,
       "birtday": pickedDate.day.toString() +
@@ -93,6 +93,7 @@ class _SingupState extends State<Singup> {
           "/" +
           pickedDate.year.toString(),
       "points": 1,
+      "savedlocation": null,
       "email": email.text.toString() ?? 'No email user dont add',
     }).then((_) {
       print("success!");
@@ -369,6 +370,8 @@ class _SingupState extends State<Singup> {
                                       validator: (value) {
                                         if (value.isEmpty) {
                                           return 'هاذا الحقل مطلوب';
+                                        } else if (value.startsWith('0')) {
+                                          return 'الرداء حذف ال 0 بعد +962';
                                         } else if (value.length < 9) {
                                           return 'الرجاء ادخال رقم هاتف صحيح';
                                         } else if (regex.hasMatch(value)) {
@@ -381,6 +384,11 @@ class _SingupState extends State<Singup> {
                                       textAlign: TextAlign.left,
                                       autovalidate: autovalidatephone,
                                       onSaved: (_) {
+                                        setState(() {
+                                          autovalidatephone = true;
+                                        });
+                                      },
+                                      onEditingComplete: () {
                                         setState(() {
                                           autovalidatephone = true;
                                         });
@@ -619,7 +627,7 @@ class _SingupState extends State<Singup> {
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
                                       style: TextStyle(
-                                          color: colorbirth,
+                                          color: Colors.black,
                                           decorationColor: colorbirth),
                                       textAlign: TextAlign.right,
                                       onTap: () {
@@ -756,7 +764,10 @@ class _SingupState extends State<Singup> {
                                         onTap: () {
                                           verifyPhoneNumber();
                                         },
-                                        child: Text("اعادة الارسال؟         ")),
+                                        child: Text(
+                                          "اعادة الارسال؟         ",
+                                          style: TextStyle(color: Colors.grey),
+                                        )),
                                   ],
                                 ),
                                 SizedBox(
@@ -783,7 +794,7 @@ class _SingupState extends State<Singup> {
                             color: Color(0xff789C3B),
                             child: Center(
                               child: Text(
-                                "انشــاء حساب",
+                                makeacount,
                                 style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -801,7 +812,7 @@ class _SingupState extends State<Singup> {
                                     sharedPreferences(context);
                                     addusertofirebase();
                                     setState(() {
-                                      makeacount = "ارسال";
+                                      makeacount = "ادخال الرمز";
                                       OTP = true;
                                     });
                                     // Navigator.of(context).pushReplacement(
@@ -890,7 +901,8 @@ class _SingupState extends State<Singup> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
 
-    sharedPreferences.setString('phone', "+962" + _phoneNumberController.text);
+    sharedPreferences.setString(
+        'phone', "+962" + _phoneNumberController.text.toString());
     sharedPreferences.setString('password', pass.text.toString());
     sharedPreferences.setString('name', name.text.toString());
 
@@ -901,12 +913,10 @@ class _SingupState extends State<Singup> {
 
 Future<void> send(BuildContext context) async {
   var firebaseUser = FirebaseAuth.instance.currentUser;
-  FirebaseFirestore.instance.collection("users").doc(firebaseUser.uid).set({
+  FirebaseFirestore.instance.collection("users").add({
     'الاسم': name.text,
     'البريد الالكتروني': email.text,
-    'رقم الهاتف': phone.text,
-    'عدد النقاط': 1,
-  }, SetOptions(merge: true)).then((_) {
-    print("success!");
+    'رقم الهاتف': "+" + phone.text,
+    'عدد النقاط': 1
   });
 }

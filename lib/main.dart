@@ -201,7 +201,7 @@ class _MyAppState extends State<MyApp> {
                           color: Colors.black,
                         ),
                         title: Text(
-                          'تسديل الخروج',
+                          'تسجيل الخروج',
                           style: GoogleFonts.cairo(
                             color: Colors.black,
                           ),
@@ -370,13 +370,13 @@ class _MainItemState extends State<MainItem> {
 
         QuerySnapshot querySnapshot = stream.data;
         return Container(
-          height: MediaQuery.of(context).size.height + 400,
+          height: MediaQuery.of(context).size.height + 350,
           child: ListView.builder(
             physics: ScrollPhysics(),
             itemCount: 1,
             itemBuilder: (context, index) {
               return Container(
-                height: MediaQuery.of(context).size.height + 400,
+                height: MediaQuery.of(context).size.height + 350,
                 width: double.infinity,
                 child: ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
@@ -418,7 +418,7 @@ class _MainItemState extends State<MainItem> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       SizedBox(
-                                        height: 20,
+                                        height: 10,
                                       ),
                                       Container(
                                         child: Column(

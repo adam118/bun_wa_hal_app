@@ -1,4 +1,3 @@
-import 'package:bun_wa_hal/auth/Singup.dart';
 import 'package:bun_wa_hal/main.dart';
 import 'package:bun_wa_hal/map/addlocationfrommap.dart';
 import 'package:bun_wa_hal/map/map.dart';
@@ -6,6 +5,7 @@ import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart' as database;
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ DateTime pickedDate;
 TextEditingController pass = TextEditingController();
 String groupVal2 = "";
 DateTime currentDate = DateTime.now();
-List<String> _locations = ['البيت', 'الشغل', 'القهوة', 'بيت الاهل']; // Option 2
+List<String> _locations = ['البيت', 'الشغل']; // Option 2
 String _selectedLocation; // Option 2
 FirebaseFirestore firestore =
     FirebaseFirestore.instance.collection('order').firestore;
@@ -51,12 +51,12 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
   Widget build(BuildContext context) {
     Color colorbirth = Colors.grey;
     String location;
-    TextEditingController _buildingnumberController;
-    TextEditingController _floornumberController;
-    TextEditingController _apartmentnumberController;
+    TextEditingController _buildingnumberController = TextEditingController();
+    TextEditingController _floornumberController = TextEditingController();
+    TextEditingController _apartmentnumberController = TextEditingController();
 
     TextEditingController _notsController = TextEditingController();
-    TextEditingController _sendController = TextEditingController(
+    TextEditingController _timesendController = TextEditingController(
       text: pickedDate.year.toString() +
           "   /   " +
           pickedDate.month.toString() +
@@ -93,9 +93,53 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
       }, currentTime: DateTime.now(), locale: LocaleType.en);
     }
 
-    Query query = FirebaseFirestore.instance.collection('users');
+    void send(
+      BuildContext context,
+      index,
+    ) async {
+      Map<String, String> locationmap = {
+        'building number': _buildingnumberController.text.toString(),
+        'flor number': _floornumberController.text.toString(),
+        'apartment number': _apartmentnumberController.text.toString(),
+        'google maps url':
+            'https://www.google.com/maps/dir//$mapposlat/@$mapposlong,12z',
+      };
+
+      Map<String, String> ordermap = {
+        'id': fbitem[index].itemId,
+        'title': fbitem[index].title,
+        'price': fbitem[index].price.toString(),
+        'cookingLevel': fbitem[index].cookingLevel,
+        'status': 'shipped',
+        'containHeal': fbitem[index].containHeal.toString(),
+        'size': size.toString(),
+      };
+      _counterRef =
+          database.FirebaseDatabase.instance.reference().child('Orders');
+      _counterRef.push().set(<String, Map<String, String>>{
+        'order': ordermap,
+        'location': locationmap
+      });
+      // FirebaseFirestore.instance
+      //     .collection("orders")
+      //     .add(<String, Map<String, String>>{
+      //   "location": locationmap,
+      //   "order": ordermap,
+      // }).then((_) {
+      //   print("success!");
+      // });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => checkout_Screen_final(),
+        ),
+      );
+    }
+
     var querydatabase =
         database.FirebaseDatabase.instance.reference().child('orders').push();
+
+    Query query = FirebaseFirestore.instance.collection('users');
 
     return Consumer<Cart>(
       builder: (context, cart, child) {
@@ -155,7 +199,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                               Row(
                                 children: [
                                   SizedBox(
-                                    width: 35,
+                                    width: 40,
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.add),
@@ -163,7 +207,8 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => addlocationfrommap(),
+                                          builder: (context) =>
+                                              addlocationfrommap(),
                                         ),
                                       );
                                     },
@@ -171,10 +216,10 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: DropdownButton(
-                                      hint: Text('انقر هنا للتحديد'),
-                                      // Not necessary for Option 1
+                                      hint: Text(
+                                        'انقر هنا للتحديد',
+                                      ),
                                       value: _selectedLocation,
-
                                       onChanged: (newValue) {
                                         setState(() {
                                           _selectedLocation = newValue;
@@ -182,7 +227,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                                       },
                                       items: _locations.map((location) {
                                         return DropdownMenuItem(
-                                          child: new Text(location),
+                                          child: Text(""),
                                           value: location,
                                         );
                                       }).toList(),
@@ -200,7 +245,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                               Row(
                                 children: [
                                   SizedBox(
-                                    width: 200,
+                                    width: 205,
                                   ),
                                   Text(
                                     " : او اختر من الخريطة",
@@ -259,7 +304,7 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                             color: Colors.grey.withOpacity(0.7),
                           ),
                         ),
-                        controller: _sendController,
+                        controller: _timesendController,
                       ),
                       trailing: Text(
                         ":   تاريخ التوصيل",
@@ -376,34 +421,51 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          height: 70,
+                          height: 80,
                           width: 150,
                           color: Colora().green,
                           child: Center(
                             // ignore: deprecated_member_use
                             child: FlatButton(
-                              child: Center(
-                                child: Text(
-                                  "ارسال الطلب",
-                                  style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontSize: 20),
-                                ),
+                              child: Text(
+                                "  ارسال الطلب  ",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontSize: 20),
                               ),
                               onPressed: () async {
                                 send(context, index);
+
                                 setState(
                                   () {
                                     cart.basketItems.length = 0;
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MyApp(),
-                                      ),
-                                    );
                                   },
                                 );
+
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      Future.delayed(Duration(seconds: 2), () {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => MyApp(),
+                                          ),
+                                        );
+                                      });
+                                      return AlertDialog(
+                                        title: Center(
+                                          child: Text(
+                                            'تم استلام طلبك',
+                                            style: GoogleFonts.cairo(
+                                                color: Colora().green,
+                                                fontSize: 15),
+                                          ),
+                                        ),
+                                      );
+                                    });
                                 // var firebaseUser =
                                 //     FirebaseAuth.instance.currentUser;
                                 // if (database.FirebaseDatabase.instance
@@ -451,29 +513,22 @@ class _checkout_Screen_finalState extends State<checkout_Screen_final> {
 //  );
 //}
 }
+// Map<String, String> map = {
+//   'id': fbitem[index].itemId,
+//   'title': fbitem[index].title,
+//   'price': fbitem[index].price.toString(),
+//   'cookingLevel': fbitem[index].cookingLevel,
+//   'status': 'shipped',
+//   'containHeal': fbitem[index].containHeal.toString(),
+//   'size': size.toString(),
+// };
+// Map<String, String> info = {
+//   'id': token,
+//   'location': 'kju84ujv84',
+//   'phone': phone.text.toString(),
+//   'رقم العمارة': '2',
+// };
 
-void send(
-  BuildContext context,
-  index,
-) async {
-  Map<String, String> map = {
-    'id': fbitem[index].itemId,
-    'title': fbitem[index].title,
-    'price': fbitem[index].price.toString(),
-    'cookingLevel': fbitem[index].cookingLevel,
-    'status': 'shipped',
-    'containHeal': fbitem[index].containHeal.toString(),
-    'size': size.toString(),
-  };
-  Map<String, String> info = {
-    'id': token,
-    'location': 'kju84ujv84',
-    'phone': phone.text.toString(),
-    'رقم العمارة': '2',
-  };
-  _counterRef = database.FirebaseDatabase.instance.reference().child('Orders');
-  _counterRef.push().set(<String, Map<String, String>>{"i": map});
-}
 // void sendDataToFB(Map<String, String> map) {
 //   // Map<String, String> map = {
 //   //   'id': fbitem[0].itemId,

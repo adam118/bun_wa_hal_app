@@ -1,10 +1,12 @@
 import 'package:badges/badges.dart';
-import 'package:bun_wa_hal/main.dart';
+import 'package:bun_wa_hal/custom_expansion_tile.dart' as custom;
 import 'package:bun_wa_hal/model/cart.dart';
 import 'package:bun_wa_hal/screens/turkt_coffe.dart';
 import 'package:bun_wa_hal/style/styli.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location_permissions/location_permissions.dart';
@@ -41,7 +43,7 @@ Widget _shoppingCartBadge() {
 String email;
 
 String password;
-String phone;
+String phonede;
 final _scaffoldKey = GlobalKey<ScaffoldState>();
 String name;
 var obtainEmail;
@@ -51,7 +53,8 @@ bool autovalidatephoneedited = false;
 
 var obtainPhone;
 
-TextEditingController _editedphonenumber = TextEditingController();
+TextEditingController _editedphonenumber =
+    TextEditingController(text: "+962790906363  ");
 
 class _MyAccountState extends State<MyAccount> {
   Future getValiducation() async {
@@ -65,7 +68,7 @@ class _MyAccountState extends State<MyAccount> {
       email = obtainEmail;
 
       password = obtainPassword;
-      phone = obtainPhone;
+      phonede = obtainPhone;
       name = obtainname;
     });
   }
@@ -81,7 +84,6 @@ class _MyAccountState extends State<MyAccount> {
     _getCurrentLocation();
   }
 
-  Query query = FirebaseFirestore.instance.collection('users');
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
@@ -104,8 +106,7 @@ class _MyAccountState extends State<MyAccount> {
       Placemark place = p[0];
 
       setState(() {
-        _currentAddress =
-            "${place.postalCode}+ ${place.locality}, ${place.country}";
+        _currentAddress = "${place.locality},${place.country}";
       });
     } catch (e) {
       print(e);
@@ -116,6 +117,10 @@ class _MyAccountState extends State<MyAccount> {
 
   @override
   Widget build(BuildContext context) {
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+
+    Query query = FirebaseFirestore.instance.collection('users');
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -139,13 +144,6 @@ class _MyAccountState extends State<MyAccount> {
                         MaterialPageRoute(builder: (context) => check_out()));
                   })
               : _shoppingCartBadge(),
-          IconButton(
-              icon: isDark ? dark : light,
-              onPressed: () {
-                setState(() {
-                  isDark = !isDark;
-                });
-              })
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -170,19 +168,26 @@ class _MyAccountState extends State<MyAccount> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
-                      color: Colors.green,
+                      color: Colora().green,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            "معلوماتي",
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
-                                color: Colora().white),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "معلوماتي",
+                                style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 20,
+                                    color: Colora().white),
+                              ),
+                            ),
                           ),
                           ListTile(
                             subtitle: Text(
                               name.toString(),
+                              textAlign: TextAlign.right,
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 20,
@@ -190,7 +195,8 @@ class _MyAccountState extends State<MyAccount> {
                               ),
                             ),
                             title: Text(
-                              "name",
+                              "الاسم",
+                              textAlign: TextAlign.right,
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.w600,
                                 color: Colora().white,
@@ -204,7 +210,7 @@ class _MyAccountState extends State<MyAccount> {
                             ),
                           ),
                           ListTile(
-                            trailing: IconButton(
+                            leading: IconButton(
                                 icon: Icon(
                                   Icons.edit,
                                   color: Colors.white,
@@ -215,19 +221,44 @@ class _MyAccountState extends State<MyAccount> {
                                       builder: (context) => AlertDialog(
                                             actions: [
                                               FlatButton(
-                                                onPressed: () {},
-                                                child: Text("تغيير"),
+                                                onPressed: () {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          "مش عارف سويها هي و التسجيل بالرقم رح اسأل استا فتيبة",
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      fontSize: 10,
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT);
+                                                },
+                                                color: Colora().green,
+                                                child: Text(
+                                                  "تغيير",
+                                                  style: GoogleFonts.cairo(
+                                                      color: Colora().white),
+                                                ),
                                               ),
                                               FlatButton(
-                                                onPressed: () {},
-                                                color: Colors.grey,
-                                                child: Text("الغاء"),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "الغاء",
+                                                  style: GoogleFonts.cairo(
+                                                      color: Colora().green),
+                                                ),
                                               ),
                                             ],
                                             title: Column(
                                               children: [
                                                 Text(
-                                                    "الرجاء ادخال الرقم الجديد"),
+                                                  "الرجاء ادخال الرقم الجديد",
+                                                  style: GoogleFonts.cairo(
+                                                      fontSize: 15,
+                                                      color: Colora().green),
+                                                ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.all(4.0),
@@ -272,9 +303,9 @@ class _MyAccountState extends State<MyAccount> {
                                                                     top: 0),
                                                         hintStyle:
                                                             GoogleFonts.cairo(
-                                                                fontSize: 20,
-                                                                color: Colors
-                                                                    .brown),
+                                                                fontSize: 15,
+                                                                color: Colora()
+                                                                    .green),
                                                         hintText: "رقم الهاتف"),
                                                     controller:
                                                         _editedphonenumber,
@@ -283,14 +314,10 @@ class _MyAccountState extends State<MyAccount> {
                                               ],
                                             ),
                                           ));
-                                  final SharedPreferences sharedPreferences =
-                                      await SharedPreferences.getInstance();
-                                  obtainPhone = sharedPreferences.setString(
-                                      'phone',
-                                      _editedphonenumber.text.toString());
                                 }),
                             subtitle: Text(
-                              phone.toString() ?? "خطأ في التحميل",
+                              phonede ?? 'خطأ',
+                              textAlign: TextAlign.right,
                               style: GoogleFonts.cairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
@@ -298,7 +325,8 @@ class _MyAccountState extends State<MyAccount> {
                               ),
                             ),
                             title: Text(
-                              "phone",
+                              "رقم الهاتف",
+                              textAlign: TextAlign.right,
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.w600,
                                 color: Colora().white,
@@ -322,6 +350,7 @@ class _MyAccountState extends State<MyAccount> {
                                 child: Text(
                                   _currentAddress ??
                                       "pleas allow the location press to allow",
+                                  textAlign: TextAlign.right,
                                   style: GoogleFonts.cairo(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
@@ -329,39 +358,33 @@ class _MyAccountState extends State<MyAccount> {
                                   ),
                                 )),
                             title: Text(
-                              "location",
+                              "الموقع",
+                              textAlign: TextAlign.right,
                               style: GoogleFonts.cairo(
-                                fontSize: 20,
+                                fontSize: 17,
                                 fontWeight: FontWeight.w600,
                                 color: Colora().white,
                               ),
                             ),
                           ),
-                          Text(
-                            'ـــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــ',
-                            style: TextStyle(
-                              color: Colors.black.withOpacity(0.1),
-                            ),
-                          ),
-                          Text(
-                            "نقاطي",
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
-                                color: Colora().white),
-                          ),
-                          ExpansionTile(
-                            title: Text(
-                              "نقاطي",
-                              style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.w600,
-                                color: Colora().white,
+                          custom.ExpansionTile(
+                            iconColor: Colora().brown,
+                            headerBackgroundColor: Colora().green,
+                            title: Center(
+                              child: Text(
+                                "       نقاطي",
+                                style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colora().white,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
                             children: [
                               ListTile(
                                 title: Text(
                                   "المجموع",
+                                  textAlign: TextAlign.right,
                                   style: GoogleFonts.cairo(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
@@ -371,6 +394,7 @@ class _MyAccountState extends State<MyAccount> {
                                 subtitle: Text(
                                   querySnapshot.docs[index]['points']
                                       .toString(),
+                                  textAlign: TextAlign.right,
                                   style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w600,
                                     color: Colora().white,
@@ -380,22 +404,34 @@ class _MyAccountState extends State<MyAccount> {
                               ListTile(
                                 title: Text(
                                   "مستبدل",
+                                  textAlign: TextAlign.right,
                                   style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w600,
                                     color: Colora().white,
                                   ),
                                 ),
-                                subtitle: Text("0"),
+                                subtitle: Text(
+                                  "0",
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.cairo(
+                                      fontSize: 15, color: Colora().white),
+                                ),
                               ),
                               ListTile(
                                 title: Text(
                                   "منتهية",
+                                  textAlign: TextAlign.right,
                                   style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w600,
                                     color: Colora().white,
                                   ),
                                 ),
-                                subtitle: Text("0"),
+                                subtitle: Text(
+                                  "0",
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.cairo(
+                                      fontSize: 15, color: Colora().white),
+                                ),
                               ),
                             ],
                           ),
@@ -409,12 +445,6 @@ class _MyAccountState extends State<MyAccount> {
           );
         },
       ),
-    );
-  }
-
-  nutSupportYet() {
-    return SnackBar(
-      content: Text("not supported yet"),
     );
   }
 }

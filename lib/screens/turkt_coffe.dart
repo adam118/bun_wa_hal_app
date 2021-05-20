@@ -848,9 +848,18 @@ class _check_outState extends State<check_out> {
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  String heall;
   @override
   Widget build(BuildContext context) {
+    if (heal == false) {
+      setState(() {
+        heall = "بدون هيل";
+      });
+    } else {
+      setState(() {
+        heall = "مع هيل";
+      });
+    }
     return Consumer<Cart>(
       builder: (context, cart, child) {
         double total = cart.totalPrice;
@@ -1064,91 +1073,124 @@ class _check_outState extends State<check_out> {
                                                       ],
                                                     ),
                                                   ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      Text(
-                                                        (cart.basketItems[index]
-                                                                .title) ??
-                                                            'error',
-                                                        style: GoogleFonts.cairo(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color:
-                                                                Colora().green,
-                                                            fontSize: TextSized()
-                                                                    .textMediam +
-                                                                5),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      Container(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Text(
-                                                              textsize +
-                                                                      " - " ??
-                                                                  'error',
-                                                              style: GoogleFonts
-                                                                  .cairo(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colora()
-                                                                    .green,
-                                                                fontSize:
-                                                                    TextSized()
-                                                                        .textMediam,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              cookinglevels +
-                                                                      " - " ??
-                                                                  'error',
-                                                              style: GoogleFonts
-                                                                  .cairo(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colora()
-                                                                    .green,
-                                                                fontSize:
-                                                                    TextSized()
-                                                                        .textMediam,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              price.toString() +
-                                                                      " JD" +
-                                                                      " - " ??
-                                                                  'error',
-                                                              style: GoogleFonts
-                                                                  .cairo(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Colora()
-                                                                    .green,
-                                                                fontSize:
-                                                                    TextSized()
-                                                                        .textMediam,
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                          ],
+                                                  Spacer(),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 14.0),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .end,
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 20,
                                                         ),
-                                                      ),
-                                                    ],
+                                                        Text(
+                                                          (cart
+                                                                  .basketItems[
+                                                                      index]
+                                                                  .title) ??
+                                                              'error',
+                                                          style: GoogleFonts.cairo(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: Colora()
+                                                                  .green,
+                                                              fontSize: TextSized()
+                                                                      .textMediam +
+                                                                  5),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 0,
+                                                        ),
+                                                        Container(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              Text(
+                                                                textsize +
+                                                                        " - " ??
+                                                                    'error',
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .cairo(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colora()
+                                                                      .green,
+                                                                  fontSize:
+                                                                      TextSized()
+                                                                              .textMediam -
+                                                                          3,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                cookinglevels +
+                                                                        " - " ??
+                                                                    'error',
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .cairo(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colora()
+                                                                      .green,
+                                                                  fontSize:
+                                                                      TextSized()
+                                                                              .textMediam -
+                                                                          3,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                heall + " -  " ??
+                                                                    'error',
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .cairo(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colora()
+                                                                      .green,
+                                                                  fontSize:
+                                                                      TextSized()
+                                                                              .textMediam -
+                                                                          3,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                price.toString() +
+                                                                        " JD" +
+                                                                        " - " ??
+                                                                    'error',
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .cairo(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colora()
+                                                                      .green,
+                                                                  fontSize:
+                                                                      TextSized()
+                                                                              .textMediam -
+                                                                          3,
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -1173,7 +1215,7 @@ class _check_outState extends State<check_out> {
                         style: GoogleFonts.cairo(
                           fontWeight: FontWeight.w600,
                           color: Colora().black,
-                          fontSize: TextSized().textMediam,
+                          fontSize: TextSized().textMediam - 5,
                         ),
                       ),
                     ),

@@ -12,7 +12,8 @@ class map extends StatefulWidget {
 }
 
 Position position;
-String pos;
+String mapposlat;
+String mapposlong;
 GoogleMapController mapController;
 
 // ignore: camel_case_types
@@ -52,7 +53,9 @@ class _mapState extends State<map> {
             color: Colors.white,
           ),
           backgroundColor: Colora().green,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         body: Stack(
           children: [
@@ -62,8 +65,8 @@ class _mapState extends State<map> {
               mapType: MapType.normal,
               onCameraMove: (CameraPosition position) {
                 setState(() {
-                  pos =
-                      "${position.target.latitude}, ${position.target.longitude}";
+                  mapposlat = "${position.target.latitude}";
+                  mapposlong = "${position.target.longitude}";
                 });
               },
               onMapCreated: _onMapCreated,
